@@ -1,0 +1,61 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:all"],
+  "jsRules": {},
+  "rules": {
+    // can turn on just for double-checking
+    "comment-format": false,
+    "completed-docs": false,
+    "cyclomatic-complexity": false,
+    "no-console": false,
+    "no-magic-numbers": false,
+    "no-non-null-assertion": false,  // typescript is not always able to know, which is the whole point of the assertion operator
+    "no-unbound-method": false,
+    "object-literal-sort-keys": false,  // declaration order setting is pretty bad at checking
+    "prefer-function-over-method": false,
+
+    // warning
+    "deprecation": {"severity": "warning"},
+
+    // always active
+    "increment-decrement": false,
+    "interface-name": [true, "never-prefix"],
+    "linebreak-style": false,  // git takes care of this
+    "match-default-export-name": false,
+    "max-classes-per-file": false,
+    "member-ordering": [true, { "order": "fields-first" }],
+    "newline-before-return": false,  // writer's judgement is best for this imo
+    "newline-per-chained-call": false,
+    "no-bitwise": false,
+    "no-object-literal-type-assertion": [true, { "allow-arguments": true }],  // lol schema is wrong, this works fine
+    "semicolon": [true, "always"],
+    "switch-default": false,
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "always",
+        "esSpecCompliant": true
+      }
+    ],
+    "typedef": [
+      true,  // noImplicitAny or strict tsconfig covers the rest
+      "call-signature",
+      "arrow-call-signature"
+    ],
+    "variable-name": [true, "allow-leading-underscore"],
+    "whitespace": [  // all except check-operator
+      true,
+      "check-branch",
+      "check-decl",
+      "check-module",
+      "check-separator",
+      "check-rest-spread",
+      "check-type",
+      "check-typecast",
+      "check-type-operator",
+      "check-preblock",
+      "check-postbrace"
+    ]
+  },
+  "rulesDirectory": []
+}
