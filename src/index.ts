@@ -2,9 +2,9 @@ import { Client, Message } from "discord.js";
 import fs from "fs";
 
 import { Command } from "./command";
+import { config } from "./config";
 
 const bot = new Client();
-const prefix: string = process.env.PREFIX!;
 const commands: Map<string, (msg: Message, args: string[]) => void> = new Map();
 
 for (const file of fs.readdirSync("dist/commands")) {
@@ -23,13 +23,11 @@ bot.on("message", (msg): void => {
     return;
   }
 
-  console.log(msg);
-
-  if (!msg.content.startsWith(prefix)) {
+  if (!msg.content.startsWith(config.prefix)) {
     return;
   }
 
-  const args = msg.content.substring(prefix.length).split(/\s+/g);
+  const args = msg.content.substring(config.prefix.length).split(/\s+/g);
   if (args.length < 1) {
     return;
   }

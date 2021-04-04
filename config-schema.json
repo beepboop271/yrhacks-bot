@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Config",
+  "description": "Configuration options for the bot that do not need to be private",
+  "type": "object",
+  "properties": {
+    "prefix": {
+      "type": "string",
+      "description": "The command prefix for the bot, such as '!'",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "prefix"
+  ]
+}
