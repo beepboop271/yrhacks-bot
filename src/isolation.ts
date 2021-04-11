@@ -1,4 +1,4 @@
-import { Client, MessageEmbed, MessageReaction} from "discord.js";
+import { Client, MessageEmbed, MessageReaction } from "discord.js";
 
 const reactionFilter = (reaction: MessageReaction): boolean =>
   reaction.emoji.name === "✅" || reaction.emoji.name === "❌";

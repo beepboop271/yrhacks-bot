@@ -21,6 +21,12 @@ export const command: Command = {
     if (msg.guild === null) {
       return;
     }
+    if (msg.member === null) {
+      return;
+    }
+    if (!msg.member.hasPermission(P.ADMINISTRATOR)) {
+      return;
+    }
 
     // TODO: check if the bot has permission to do this stuff first?
 

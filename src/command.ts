@@ -34,7 +34,7 @@ export const registerCommands = (bot: Client): void => {
     if (args.length < 1) {
       return;
     }
-    const command = commands.get(args[0]);
+    const command = commands.get(args.shift()!);  // already checked length
     if (command === undefined) {
       return;
     }
