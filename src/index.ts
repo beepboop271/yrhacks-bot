@@ -1,5 +1,6 @@
 import { Client } from "discord.js";
 
+import { registerCensoring } from "./censoring";
 import { registerCommands } from "./command";
 import { registerIsolation } from "./isolation";
 
@@ -9,6 +10,7 @@ bot.on("ready", (): void => {
   console.log("logged in");
 });
 
+registerCensoring(bot);
 registerCommands(bot);
 registerIsolation(bot);
 

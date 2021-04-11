@@ -8,6 +8,11 @@
       "type": "string",
       "description": "The command prefix for the bot, such as '!'",
       "minLength": 1
+    },
+    "wordlistFile": {
+      "type": "string",
+      "description": "The path to the banned word list json file",
+      "minLength": 1
     }
   },
   "required": [
