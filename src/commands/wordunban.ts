@@ -7,10 +7,7 @@ import { config } from "../config";
 export const command: Command = {
   name: "wordunban",
   execute: async (_client, msg, args): Promise<void> => {
-    if (msg.member === null) {
-      return;
-    }
-    if (!msg.member.hasPermission(Permissions.FLAGS.MANAGE_MESSAGES)) {
+    if (msg.member?.hasPermission(Permissions.FLAGS.MANAGE_MESSAGES) !== true) {
       return;
     }
 

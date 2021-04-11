@@ -22,6 +22,9 @@ for (const file of fs.readdirSync("dist/commands")) {
 
 export const registerCommands = (bot: Client): void => {
   bot.on("message", (msg): void => {
+    if (msg.guild === null) {
+      return;
+    }
     if (msg.author.bot) {
       return;
     }
