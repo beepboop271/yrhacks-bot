@@ -2,5 +2,8 @@
 node_modules
 dist
 .env
+
+channels.json
 config.json
+roles.json
 wordlist.json

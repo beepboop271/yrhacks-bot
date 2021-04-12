@@ -9,6 +9,16 @@
       "description": "The command prefix for the bot, such as '!'",
       "minLength": 1
     },
+    "channelFile": {
+      "type": "string",
+      "description": "The path to the server channel config json file",
+      "minLength": 1
+    },
+    "roleFile": {
+      "type": "string",
+      "description": "The path to the server role config json file",
+      "minLength": 1
+    },
     "wordlistFile": {
       "type": "string",
       "description": "The path to the banned word list json file",

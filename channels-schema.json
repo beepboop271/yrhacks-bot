@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Channels",
+  "description": "Channels to set up in the discord server",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "description": "A channel category",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "The name of the category",
+        "minLength": 1
+      },
+      "permissionOverwrites": {
+        "$ref": "#/definitions/permissionOverwrites"
+      },
+      "channels": {
+        "type": "array",
+        "description": "The channels part of this category",
+        "items": {
+          "type": "object",
+          "description": "A single channel",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The name of this channel",
+              "minLength": 1
+            },
+            "permissionOverwrites": {
+              "$ref": "#/definitions/permissionOverwrites"
+            },
+            "topic": {
+              "type": "string",
+              "description": "The topic of this channel"
+            },
+            "type": {
+              "type": "string",
+              "description": "The type of this channel. None implies text",
+              "enum": [
+                "text",
+                "voice",
+                "news",
+                "store"
+              ]
+            }
+          },
+          "required": [ "name" ]
+        }
+      }
+    },
+    "required": [ "name" ]
+  },
+  "definitions": {
+    "permissionOverwrites": {
+      "type": "array",
+      "description": "The permissions to grant to certain roles for the channel/category",
+      "items": {
+        "type": "object",
+        "description": "A single rule that applies the given permissions to the given roles",
+        "properties": {
+          "id": {
+            "type": "array",
+            "description": "The roles to apply this overwrite to",
+            "items": {
+              "type": "string",
+              "description": "The name of a role",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "allow": {
+            "type": "array",
+            "description": "The permissions to grant to this overwrite",
+            "items": {
+              "type": "string",
+              "description": "The name of the permission",
+              "enum": [
+                "CREATE_INSTANT_INVITE",
+                "KICK_MEMBERS",
+                "BAN_MEMBERS",
+                "ADMINISTRATOR",
+                "MANAGE_CHANNELS",
+                "MANAGE_GUILD",
+                "ADD_REACTIONS",
+                "VIEW_AUDIT_LOG",
+                "PRIORITY_SPEAKER",
+                "STREAM",
+                "VIEW_CHANNEL",
+                "SEND_MESSAGES",
+                "SEND_TTS_MESSAGES",
+                "MANAGE_MESSAGES",
+                "EMBED_LINKS",
+                "ATTACH_FILES",
+                "READ_MESSAGE_HISTORY",
+                "MENTION_EVERYONE",
+                "USE_EXTERNAL_EMOJIS",
+                "VIEW_GUILD_INSIGHTS",
+                "CONNECT",
+                "SPEAK",
+                "MUTE_MEMBERS",
+                "DEAFEN_MEMBERS",
+                "MOVE_MEMBERS",
+                "USE_VAD",
+                "CHANGE_NICKNAME",
+                "MANAGE_NICKNAMES",
+                "MANAGE_ROLES",
+                "MANAGE_WEBHOOKS",
+                "MANAGE_EMOJIS"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [ "id", "allow" ]
+      }
+    }
+  }
+}

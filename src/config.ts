@@ -2,10 +2,53 @@ import Ajv, { ValidateFunction } from "ajv";
 import fs from "fs";
 
 // TODO: two sources of truth with the schema and TS interface
+
+// could replace with the real type from the library, but then
+// it might update without our schema files updating
+type PermissionString =
+  | "CREATE_INSTANT_INVITE" | "KICK_MEMBERS" | "BAN_MEMBERS"
+  | "ADMINISTRATOR" | "MANAGE_CHANNELS" | "MANAGE_GUILD"
+  | "ADD_REACTIONS" | "VIEW_AUDIT_LOG" | "PRIORITY_SPEAKER"
+  | "STREAM" | "VIEW_CHANNEL" | "SEND_MESSAGES"
+  | "SEND_TTS_MESSAGES" | "MANAGE_MESSAGES" | "EMBED_LINKS"
+  | "ATTACH_FILES" | "READ_MESSAGE_HISTORY" | "MENTION_EVERYONE"
+  | "USE_EXTERNAL_EMOJIS" | "VIEW_GUILD_INSIGHTS" | "CONNECT"
+  | "SPEAK" | "MUTE_MEMBERS" | "DEAFEN_MEMBERS" | "MOVE_MEMBERS"
+  | "USE_VAD" | "CHANGE_NICKNAME" | "MANAGE_NICKNAMES"
+  | "MANAGE_ROLES" | "MANAGE_WEBHOOKS" | "MANAGE_EMOJIS";
+
+interface OverwriteConfig {
+  id: string[];
+  allow: PermissionString[];
+}
+
+interface ChannelConfig {
+  name: string;
+  topic: string;
+  permissionOverwrites: OverwriteConfig[];
+}
+
+interface CategoryConfig {
+  name: string;
+  permissionOverwrites: OverwriteConfig[];
+  channels: ChannelConfig[];
+}
+
+interface RoleConfig {
+  name: string;
+  hoist: boolean;
+  permissions: PermissionString[];
+  mentionable: boolean;
+}
+
 interface Config {
   prefix: string;
+  channelFile?: string;
+  roleFile?: string;
   wordlistFile?: string;
 
+  channels: CategoryConfig[];
+  roles: RoleConfig[];
   wordlist: Set<string>;
 }
 
@@ -30,6 +73,8 @@ const readJson = async (
 };
 
 const configSchema = new Ajv().compile(await readJsonFile("config-schema.json"));
+const channelSchema = new Ajv().compile(await readJsonFile("channels-schema.json"));
+const roleSchema = new Ajv().compile(await readJsonFile("roles-schema.json"));
 const wordlistSchema = new Ajv().compile(await readJsonFile("wordlist-schema.json"));
 
 // tslint:enable
@@ -44,8 +89,31 @@ export const reloadConfig = async (): Promise<boolean> => {
     return false;
   }
 
-  data.wordlist = new Set();
+  data.channels = [];
+  if (data.channelFile !== undefined) {
+    const channelData = await readJson(
+      data.channelFile,
+      channelSchema,
+    ) as (CategoryConfig[] | false);
 
+    if (channelData !== false) {
+      data.channels = channelData;
+    }
+  }
+
+  data.roles = [];
+  if (data.roleFile !== undefined) {
+    const roleData = await readJson(
+      data.roleFile,
+      roleSchema,
+    ) as (RoleConfig[] | false);
+
+    if (roleData !== false) {
+      data.roles = roleData;
+    }
+  }
+
+  data.wordlist = new Set();
   if (data.wordlistFile !== undefined) {
     const wordData = await readJson(
       data.wordlistFile,

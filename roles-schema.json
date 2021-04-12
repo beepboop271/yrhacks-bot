@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Roles",
+  "description": "Roles to set up in the discord server",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "description": "A role",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "The name of the role",
+        "minLength": 1
+      },
+      "hoist": {
+        "type": "boolean",
+        "description": "Whether the role should appear separately, default false"
+      },
+      "permissions": {
+        "type": "array",
+        "description": "The permissions to grant to this role",
+        "items": {
+          "type": "string",
+          "description": "The name of the role",
+          "enum": [
+            "CREATE_INSTANT_INVITE",
+            "KICK_MEMBERS",
+            "BAN_MEMBERS",
+            "ADMINISTRATOR",
+            "MANAGE_CHANNELS",
+            "MANAGE_GUILD",
+            "ADD_REACTIONS",
+            "VIEW_AUDIT_LOG",
+            "PRIORITY_SPEAKER",
+            "STREAM",
+            "VIEW_CHANNEL",
+            "SEND_MESSAGES",
+            "SEND_TTS_MESSAGES",
+            "MANAGE_MESSAGES",
+            "EMBED_LINKS",
+            "ATTACH_FILES",
+            "READ_MESSAGE_HISTORY",
+            "MENTION_EVERYONE",
+            "USE_EXTERNAL_EMOJIS",
+            "VIEW_GUILD_INSIGHTS",
+            "CONNECT",
+            "SPEAK",
+            "MUTE_MEMBERS",
+            "DEAFEN_MEMBERS",
+            "MOVE_MEMBERS",
+            "USE_VAD",
+            "CHANGE_NICKNAME",
+            "MANAGE_NICKNAMES",
+            "MANAGE_ROLES",
+            "MANAGE_WEBHOOKS",
+            "MANAGE_EMOJIS"
+          ]
+        }
+      },
+      "mentionable": {
+        "type": "boolean",
+        "description": "Whether the role can be mentioned by all users, default false"
+      }
+    },
+    "required": [ "name" ]
+  }
+}
