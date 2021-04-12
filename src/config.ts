@@ -17,28 +17,29 @@ type PermissionString =
   | "USE_VAD" | "CHANGE_NICKNAME" | "MANAGE_NICKNAMES"
   | "MANAGE_ROLES" | "MANAGE_WEBHOOKS" | "MANAGE_EMOJIS";
 
-interface OverwriteConfig {
+export interface OverwriteConfig {
   id: string[];
   allow: PermissionString[];
 }
 
 interface ChannelConfig {
   name: string;
-  topic: string;
-  permissionOverwrites: OverwriteConfig[];
+  permissionOverwrites?: OverwriteConfig[];
+  topic?: string;
+  type?: "text" | "voice" | "news" | "store";
 }
 
 interface CategoryConfig {
   name: string;
-  permissionOverwrites: OverwriteConfig[];
-  channels: ChannelConfig[];
+  permissionOverwrites?: OverwriteConfig[];
+  channels?: ChannelConfig[];
 }
 
 interface RoleConfig {
   name: string;
-  hoist: boolean;
-  permissions: PermissionString[];
-  mentionable: boolean;
+  hoist?: boolean;
+  permissions?: PermissionString[];
+  mentionable?: boolean;
 }
 
 interface Config {
