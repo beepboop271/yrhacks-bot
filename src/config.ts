@@ -44,9 +44,10 @@ interface RoleConfig {
 
 interface Config {
   prefix: string;
-  channelFile?: string;
-  roleFile?: string;
-  wordlistFile?: string;
+  channelFile: string;
+  dbFile: string;
+  roleFile: string;
+  wordlistFile: string;
 
   channels: CategoryConfig[];
   roles: RoleConfig[];
@@ -91,41 +92,29 @@ export const reloadConfig = async (): Promise<boolean> => {
     return false;
   }
 
-  data.channels = [];
-  if (data.channelFile !== undefined) {
-    const channelData = await readJson(
-      data.channelFile,
-      await readJsonSchema("channels"),
-    ) as (CategoryConfig[] | false);
+  const channelData = await readJson(
+    data.channelFile,
+    await readJsonSchema("channels"),
+  ) as (CategoryConfig[] | false);
 
-    if (channelData !== false) {
-      data.channels = channelData;
-    }
-  }
+  data.channels = channelData !== false ? channelData : [];
 
-  data.roles = [];
-  if (data.roleFile !== undefined) {
-    const roleData = await readJson(
-      data.roleFile,
-      await readJsonSchema("roles"),
-    ) as (RoleConfig[] | false);
+  const roleData = await readJson(
+    data.roleFile,
+    await readJsonSchema("roles"),
+  ) as (RoleConfig[] | false);
 
-    if (roleData !== false) {
-      data.roles = roleData;
-    }
-  }
+  data.roles = roleData !== false ? roleData : [];
 
   data.wordlist = new Set();
-  if (data.wordlistFile !== undefined) {
-    const wordData = await readJson(
-      data.wordlistFile,
-      await readJsonSchema("wordlist"),
-    ) as (string[] | false);
+  const wordData = await readJson(
+    data.wordlistFile,
+    await readJsonSchema("wordlist"),
+  ) as (string[] | false);
 
-    if (wordData !== false) {
-      for (const word of wordData) {
-        data.wordlist.add(word);
-      }
+  if (wordData !== false) {
+    for (const word of wordData) {
+      data.wordlist.add(word);
     }
   }
 
