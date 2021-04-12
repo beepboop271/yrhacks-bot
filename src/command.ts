@@ -12,7 +12,7 @@ export interface Command {
 
 const commands: Map<string, CommandExecutor> = new Map();
 
-for (const file of fs.readdirSync("dist/commands")) {
+for (const file of await fs.promises.readdir("dist/commands")) {
   if (file.endsWith(".js")) {
     // tslint:disable-next-line: no-unsafe-any
     const command: Command = (await import(`./commands/${file}`)).command;
