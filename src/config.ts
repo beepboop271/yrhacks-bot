@@ -76,19 +76,16 @@ const readJson = async (
 };
 // tslint:enable
 
-const schemas = {
-  config: await readJsonSchema("config"),
-  channels: await readJsonSchema("channels"),
-  roles: await readJsonSchema("roles"),
-  wordlist: await readJsonSchema("wordlist"),
-};
-
 const configPath = process.env.CONFIG_FILE!;
 
 export let config: Config;
 
 export const reloadConfig = async (): Promise<boolean> => {
-  const data = await readJson(configPath, schemas.config) as (Config | false);
+  const data = await readJson(
+    configPath,
+    await readJsonSchema("config"),
+  ) as (Config | false);
+
   if (data === false) {
     return false;
   }
@@ -97,7 +94,7 @@ export const reloadConfig = async (): Promise<boolean> => {
   if (data.channelFile !== undefined) {
     const channelData = await readJson(
       data.channelFile,
-      schemas.channels,
+      await readJsonSchema("channels"),
     ) as (CategoryConfig[] | false);
 
     if (channelData !== false) {
@@ -109,7 +106,7 @@ export const reloadConfig = async (): Promise<boolean> => {
   if (data.roleFile !== undefined) {
     const roleData = await readJson(
       data.roleFile,
-      schemas.roles,
+      await readJsonSchema("roles"),
     ) as (RoleConfig[] | false);
 
     if (roleData !== false) {
@@ -121,7 +118,7 @@ export const reloadConfig = async (): Promise<boolean> => {
   if (data.wordlistFile !== undefined) {
     const wordData = await readJson(
       data.wordlistFile,
-      schemas.wordlist,
+      await readJsonSchema("wordlist"),
     ) as (string[] | false);
 
     if (wordData !== false) {
