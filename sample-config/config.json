@@ -1,0 +1,6 @@
+{
+  "prefix": "!",
+  "channelFile": "sample-config/channels.json",
+  "roleFile": "sample-config/roles.json",
+  "wordlistFile": "sample-config/wordlist.json"
+}

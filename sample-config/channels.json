@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Important",
+    "permissionOverwrites": [
+      {
+        "id": [ "participant" ],
+        "allow": [ "VIEW_CHANNEL" ]
+      }
+    ],
+    "channels": [
+      {
+        "name": "announcements"
+      }
+    ]
+  },
+  {
+    "name": "General",
+    "permissionOverwrites": [
+      {
+        "id": [ "participant" ],
+        "allow": [ "VIEW_CHANNEL", "SEND_MESSAGES" ]
+      }
+    ],
+    "channels": [
+      {
+        "name": "general"
+      }
+    ]
+  },
+  {
+    "name": "Moderators",
+    "channels": [
+      {
+        "name": "moderation-general"
+      }
+    ]
+  }
+]

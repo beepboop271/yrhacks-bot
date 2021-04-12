@@ -1,0 +1,12 @@
+[
+  {
+    "name": "moderator",
+    "hoist": true,
+    "permissions": [ "ADMINISTRATOR" ],
+    "mentionable": true
+  },
+  {
+    "name": "participant",
+    "permissions": [ "READ_MESSAGE_HISTORY" ]
+  }
+]
