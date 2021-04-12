@@ -60,6 +60,9 @@ interface Config {
 const readJsonFile = async (file: string): Promise<any> =>
   JSON.parse((await fs.promises.readFile(file)).toString());
 
+const readJsonSchema = async (name: string): Promise<ValidateFunction> =>
+  new Ajv().compile(await readJsonFile(`schemas/${name}-schema.json`));
+
 const readJson = async (
   file: string,
   schema: ValidateFunction,
@@ -71,20 +74,21 @@ const readJson = async (
   }
   return data;
 };
-
-const configSchema = new Ajv().compile(await readJsonFile("config-schema.json"));
-const channelSchema = new Ajv().compile(await readJsonFile("channels-schema.json"));
-const roleSchema = new Ajv().compile(await readJsonFile("roles-schema.json"));
-const wordlistSchema = new Ajv().compile(await readJsonFile("wordlist-schema.json"));
-
 // tslint:enable
+
+const schemas = {
+  config: await readJsonSchema("config"),
+  channels: await readJsonSchema("channels"),
+  roles: await readJsonSchema("roles"),
+  wordlist: await readJsonSchema("wordlist"),
+};
 
 const configPath = process.env.CONFIG_FILE!;
 
 export let config: Config;
 
 export const reloadConfig = async (): Promise<boolean> => {
-  const data = await readJson(configPath, configSchema) as (Config | false);
+  const data = await readJson(configPath, schemas.config) as (Config | false);
   if (data === false) {
     return false;
   }
@@ -93,7 +97,7 @@ export const reloadConfig = async (): Promise<boolean> => {
   if (data.channelFile !== undefined) {
     const channelData = await readJson(
       data.channelFile,
-      channelSchema,
+      schemas.channels,
     ) as (CategoryConfig[] | false);
 
     if (channelData !== false) {
@@ -105,7 +109,7 @@ export const reloadConfig = async (): Promise<boolean> => {
   if (data.roleFile !== undefined) {
     const roleData = await readJson(
       data.roleFile,
-      roleSchema,
+      schemas.roles,
     ) as (RoleConfig[] | false);
 
     if (roleData !== false) {
@@ -117,7 +121,7 @@ export const reloadConfig = async (): Promise<boolean> => {
   if (data.wordlistFile !== undefined) {
     const wordData = await readJson(
       data.wordlistFile,
-      wordlistSchema,
+      schemas.wordlist,
     ) as (string[] | false);
 
     if (wordData !== false) {
