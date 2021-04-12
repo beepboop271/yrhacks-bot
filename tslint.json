@@ -28,6 +28,7 @@
     "newline-per-chained-call": false,
     "no-bitwise": false,
     "no-object-literal-type-assertion": [true, { "allow-arguments": true }],  // lol schema is wrong, this works fine
+    "no-submodule-imports": false,  // unfortunately some type definitions make this needed sometimes
     "semicolon": [true, "always"],
     "switch-default": false,
     "trailing-comma": [

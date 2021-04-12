@@ -5,5 +5,6 @@ dist
 
 /channels.json
 /config.json
+/db.json
 /roles.json
 /wordlist.json
