@@ -1,6 +1,7 @@
-import { GuildChannel, GuildMember, Role } from "discord.js";
+import { GuildMember, OverwriteData, Role } from "discord.js";
 
 import { Command } from "../command";
+import { fetchChannel, fetchGuild, fetchRole } from "../db";
 
 export const command: Command = {
   name: "request_mentor",
@@ -8,19 +9,24 @@ export const command: Command = {
     if (msg.member === null || msg.guild === null) {
       return;
     }
-    //TODO: get rid of hard code
-    if (msg.member.roles.cache.find(r => r.name === "participant") === undefined) {
+
+    const { member, guild } = msg;
+
+    const db = fetchGuild(guild);
+    if (db === undefined) {
+      return;
+    }
+    if (!member.roles.cache.has(db.roles.participant)) {
       return;
     }
 
     const teamMembers: GuildMember[] = [msg.member];
     const requestedMentors: GuildMember[] = [];
-    const requestedTopics: Role[] = [];
 
     // roles mentioned (required)
-    for (const role of msg.mentions.roles) {
-      requestedTopics.push(role[1]); // TODO: validate the role is a mentoring topic role
-    }
+    // TODO: validate the role is a mentoring topic role
+    const requestedTopics: Role[] = [...msg.mentions.roles.values()];
+
     // TODO: if requesting specific mentors its not a requirement to also mention topics
     if (requestedTopics.length === 0) {
       await msg.reply("Please mention at least 1 topic to request mentorship.");
@@ -28,21 +34,26 @@ export const command: Command = {
     }
 
     // members mentioned (optional; can include team members and mentors)
-    for (const user of msg.mentions.users) {
-      //TODO: get rid of hard code
-      if (msg.member.roles.cache.find(r => r.name === "mentor") !== undefined) {
-        requestedMentors.push(msg.guild.member(user[1])!);
-      //TODO: get rid of hard code
-      } else if (msg.member.roles.cache.find(r => r.name === "participant") !== undefined) {
-        teamMembers.push(msg.guild.member(user[1])!);
+    for (const user of msg.mentions.users.values()) {
+      const mentioned = guild.member(user);
+      if (mentioned === null) {
+        return;
+      }
+
+      if (mentioned.roles.cache.has(db.roles.mentor)) {
+        requestedMentors.push(mentioned);
+      } else if (mentioned.roles.cache.has(db.roles.participant)) {
+        teamMembers.push(mentioned);
       }
     }
+
     if (requestedMentors.length === 0) {
-      //TODO: get rid of hard code
-      const mentorRole = msg.guild.roles.cache.find(role => role.name === "mentor")!;
-      for (const m of mentorRole.members) {
-        requestedMentors.push(m[1]);
+      const mentorRole = fetchRole(guild, db.roles.mentor);
+      if (mentorRole === undefined) {
+        return;
       }
+
+      requestedMentors.push(...mentorRole.members.values());
     }
 
     // find available mentors
@@ -51,8 +62,10 @@ export const command: Command = {
       // For now, a mentor will only be qualified if they know all requested topics.
       // Alternative method: mentors are qualified if they are available + knowing at least 1 topic,
       //                     and the team will be assigned the mentor knowing the most requested topics.
-      if ((m.roles.cache.find(r => r.name === "available") !== undefined) //TODO: get rid of hard code
-          && (requestedTopics.every(topic => m.roles.cache.find(r => r.name === topic.name) !== undefined))) {
+      if (
+        m.roles.cache.has(db.roles.available)
+        && requestedTopics.every((topic): boolean => m.roles.cache.has(topic.id))
+      ) {
         availableMentors.push(m);
       }
     }
@@ -66,37 +79,35 @@ export const command: Command = {
       return;
     }
 
+    const mentorCategory = fetchChannel(guild, db.channels.Mentorship);
+    if (mentorCategory === undefined) {
+      return;
+    }
+
     // pick the first one and create a private channel for the mentor and the team
     // (for the alt method the list will be sorted)
+    const mentor: GuildMember = availableMentors[0];
     const channel = await msg.guild.channels.create(
       "mentor-session",
       {
         type: "text",
-        // TODO: get rid of hard code
-        parent: msg.guild.channels.cache.find(c => c.name === "Mentorship" && c.type === "category"),
+        parent: mentorCategory,
+        permissionOverwrites: [
+          {
+            id: mentor.id,
+            allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+            type: "member",
+          },
+          ...teamMembers.map((teamMember): OverwriteData => ({
+            id: teamMember.id,
+            allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+            type: "member",
+          })),
+        ],
       },
     );
 
-    const mentor: GuildMember = availableMentors[0];
-    //TODO: get rid of hard code
-    await mentor.roles.remove(msg.guild.roles.cache.find(role => role.name === "available")!);
-    await channel.overwritePermissions([
-      {
-        id: mentor.id,
-        allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
-      },
-    ]);
-    for (const member of teamMembers) {
-      await channel.overwritePermissions([
-        {
-          id: member.id,
-          allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
-        },
-      ]);
-    }
-    const targetChannel: GuildChannel = msg.guild.channels.cache.get(channel.id)!;
-    if (targetChannel.isText()) {
-      await targetChannel.send("You may begin your mentorship session!");
-    }
+    await mentor.roles.remove(db.roles.available);
+    await channel.send("You may begin your mentorship session!");
   },
 };

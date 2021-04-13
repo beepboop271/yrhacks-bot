@@ -18,6 +18,7 @@ interface GuildInfo {
   };
   channels: {
     approvals: string;
+    Mentorship: string;
     [key: string]: string;
   };
 }
