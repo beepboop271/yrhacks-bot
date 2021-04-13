@@ -142,6 +142,9 @@ export const command: Command = {
     const channelsDb = db(`${guild.id}.channels`);
     const writes: Array<Promise<unknown>> = [];
 
+    // kind of awkward...
+    // if all we're doing is get and set maybe this isn't
+    // the best library to use
     for (const [name, role] of roleMap) {
       writes.push(rolesDb.write(set(name, role.id)));
     }

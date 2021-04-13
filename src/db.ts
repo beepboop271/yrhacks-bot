@@ -14,6 +14,7 @@ interface GuildInfo {
     [key: string]: string | undefined;
   };
   channels: {
+    approvals: string;
     [key: string]: string;
   };
 }

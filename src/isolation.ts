@@ -1,14 +1,27 @@
 import { Client, MessageEmbed, MessageReaction } from "discord.js";
 
+import { db } from "./db";
+
 const reactionFilter = (reaction: MessageReaction): boolean =>
   reaction.emoji.name === "✅" || reaction.emoji.name === "❌";
 
 export const registerIsolation = (bot: Client): void => {
   bot.on("guildMemberAdd", async (member): Promise<void> => {
-    const { user } = member;
-    const { systemChannel } = member.guild;
-    if (systemChannel === null) {
-      console.log("no system channel set");
+    const { user, guild } = member;
+
+    const guildDb = db.getState()[guild.id];
+    if (guildDb === undefined) {
+      console.warn(`guild ${guild.id} (${guild.name}) not setup properly`);
+      return;
+    }
+
+    const target = guild.channels.resolve(guildDb.channels.approvals);
+    if (target === null) {
+      console.warn(`#approvals ${guildDb.channels.approvals} is not in the right guild ${guild.id}`);
+      return;
+    }
+    if (!target.isText()) {
+      console.warn(`#approvals ${guildDb.channels.approvals} is not a text channel`);
       return;
     }
 
@@ -23,9 +36,8 @@ export const registerIsolation = (bot: Client): void => {
       },
     };
 
-    const msg = await systemChannel.send(new MessageEmbed(embed));
+    const msg = await target.send(new MessageEmbed(embed));
     await msg.react("✅");
-    await msg.react("❌");
     const collector = msg.createReactionCollector(reactionFilter, {
       time: 1000*60*60*24,
     });
@@ -36,10 +48,10 @@ export const registerIsolation = (bot: Client): void => {
     // detailed system on how to reject users
     collector.on("collect", async (reaction, approvingUser): Promise<void> => {
       if (reaction.emoji.name === "✅") {
-        const participant = member.guild.roles.cache.find((role): boolean => role.name === "Participant");
-        if (participant !== undefined) {
-          await member.roles.add(participant, `Approved by ${approvingUser.username}#${approvingUser.discriminator}`);
-        }
+        await member.roles.add(
+          guildDb.roles.participant,
+          `Approved by ${approvingUser.username}#${approvingUser.discriminator}`,
+        );
       }
     });
   });
