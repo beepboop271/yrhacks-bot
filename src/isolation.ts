@@ -9,12 +9,12 @@ export const registerIsolation = (bot: Client): void => {
   bot.on("guildMemberAdd", async (member): Promise<void> => {
     const { user, guild } = member;
 
-    const guildDb = fetchGuild(guild);
-    if (guildDb === undefined) {
+    const db = fetchGuild(guild);
+    if (db === undefined) {
       return;
     }
 
-    const target = fetchChannel(guild, guildDb.channels.approvals);
+    const target = fetchChannel(guild, db.channels.approvals);
     if (target === undefined) {
       return;
     }
@@ -47,7 +47,7 @@ export const registerIsolation = (bot: Client): void => {
     collector.on("collect", async (reaction, approvingUser): Promise<void> => {
       if (reaction.emoji.name === "✅") {
         await member.roles.add(
-          guildDb.roles.participant,
+          db.roles.participant,
           `Approved by ${approvingUser.username}#${approvingUser.discriminator}`,
         );
       }

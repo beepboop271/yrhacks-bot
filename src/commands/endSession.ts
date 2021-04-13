@@ -13,8 +13,8 @@ export const command: Command = {
       return;
     }
 
-    const guildDb = fetchGuild(guild);
-    if (guildDb === undefined) {
+    const db = fetchGuild(guild);
+    if (db === undefined) {
       return;
     }
 
@@ -23,8 +23,8 @@ export const command: Command = {
     setTimeout(channel.delete.bind(channel), 30000);
 
     for (const member of channel.members.values()) {
-      if (member.roles.cache.has(guildDb.roles.mentor)) {
-        await member.roles.add(guildDb.roles.available);
+      if (member.roles.cache.has(db.roles.mentor)) {
+        await member.roles.add(db.roles.available);
         return;
       }
     }
