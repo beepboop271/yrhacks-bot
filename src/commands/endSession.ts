@@ -1,5 +1,5 @@
 import { Command } from "../command";
-import { db } from "../db";
+import { fetchGuild } from "../db";
 
 export const command: Command = {
   name: "end_session",
@@ -9,19 +9,12 @@ export const command: Command = {
     }
     const { guild, channel } = msg;
 
-    const guildDb = db.getState()[guild.id];
-    if (guildDb === undefined) {
-      console.warn(`guild ${guild.id} (${guild.name}) not setup properly`);
-      return;
-    }
-
-    const availableRole = msg.guild.roles.resolve(guildDb.roles.available);
-    if (availableRole === null) {
-      console.warn(`@available ${guildDb.roles.available} is not in the right guild ${guild.id}`);
-      return;
-    }
-
     if (channel.parent?.name !== "Mentorship") {
+      return;
+    }
+
+    const guildDb = fetchGuild(guild);
+    if (guildDb === undefined) {
       return;
     }
 
@@ -31,7 +24,7 @@ export const command: Command = {
 
     for (const member of channel.members.values()) {
       if (member.roles.cache.has(guildDb.roles.mentor)) {
-        await member.roles.add(availableRole);
+        await member.roles.add(guildDb.roles.available);
         return;
       }
     }

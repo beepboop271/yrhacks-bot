@@ -1,3 +1,4 @@
+import { Guild, GuildChannel, Role } from "discord.js";
 import FileAsync from "lowdb/adapters/FileAsync";
 import lowdb from "lowdb/lib/fp";
 
@@ -27,3 +28,29 @@ interface Schema {
 
 const adapter = new FileAsync<Schema>(config.dbFile);
 export const db = await lowdb(adapter);
+
+export const fetchGuild = (guild: Guild): GuildInfo | undefined => {
+  const guildDb = db.getState()[guild.id];
+  if (guildDb === undefined) {
+    console.warn(`guild ${guild.id} (${guild.name}) not setup properly`);
+  }
+  return guildDb;
+};
+
+export const fetchRole = (guild: Guild, id: string): Role | undefined => {
+  const role = guild.roles.resolve(id);
+  if (role === null) {
+    console.warn(`role ${id} is not in the right guild ${guild.id}`);
+    return undefined;
+  }
+  return role;
+};
+
+export const fetchChannel = (guild: Guild, id: string): GuildChannel | undefined => {
+  const channel = guild.channels.resolve(id);
+  if (channel === null) {
+    console.warn(`channel ${id} is not in the right guild ${guild.id}`);
+    return undefined;
+  }
+  return channel;
+};

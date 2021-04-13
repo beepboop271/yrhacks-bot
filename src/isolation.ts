@@ -1,6 +1,6 @@
 import { Client, MessageEmbed, MessageReaction } from "discord.js";
 
-import { db } from "./db";
+import { fetchChannel, fetchGuild } from "./db";
 
 const reactionFilter = (reaction: MessageReaction): boolean =>
   reaction.emoji.name === "✅" || reaction.emoji.name === "❌";
@@ -9,19 +9,17 @@ export const registerIsolation = (bot: Client): void => {
   bot.on("guildMemberAdd", async (member): Promise<void> => {
     const { user, guild } = member;
 
-    const guildDb = db.getState()[guild.id];
+    const guildDb = fetchGuild(guild);
     if (guildDb === undefined) {
-      console.warn(`guild ${guild.id} (${guild.name}) not setup properly`);
       return;
     }
 
-    const target = guild.channels.resolve(guildDb.channels.approvals);
-    if (target === null) {
-      console.warn(`#approvals ${guildDb.channels.approvals} is not in the right guild ${guild.id}`);
+    const target = fetchChannel(guild, guildDb.channels.approvals);
+    if (target === undefined) {
       return;
     }
     if (!target.isText()) {
-      console.warn(`#approvals ${guildDb.channels.approvals} is not a text channel`);
+      console.warn(`channel ${target.id} is not a text channel`);
       return;
     }
 
