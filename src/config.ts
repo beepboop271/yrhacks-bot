@@ -37,6 +37,7 @@ interface CategoryConfig {
 
 interface RoleConfig {
   name: string;
+  color: string;
   hoist?: boolean;
   permissions?: PermissionString[];
   mentionable?: boolean;

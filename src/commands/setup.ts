@@ -92,6 +92,7 @@ export const command: Command = {
       const roleObj = await roles.create({
         data: {
           name: role.name,
+          color: role.color,
           hoist: role.hoist ?? false,
           permissions: makePerms(role.permissions),
           mentionable: role.mentionable ?? false,
