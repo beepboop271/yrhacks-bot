@@ -1,9 +1,6 @@
-import { Client, MessageEmbed, MessageReaction } from "discord.js";
+import { Client, MessageEmbed } from "discord.js";
 
 import { fetchChannel, fetchGuild } from "./db";
-
-const reactionFilter = (reaction: MessageReaction): boolean =>
-  reaction.emoji.name === "✅" || reaction.emoji.name === "❌";
 
 export const registerIsolation = (bot: Client): void => {
   bot.on("guildMemberAdd", async (member): Promise<void> => {
@@ -19,12 +16,12 @@ export const registerIsolation = (bot: Client): void => {
       return;
     }
     if (!target.isText()) {
-      console.warn(`channel ${target.id} is not a text channel`);
+      console.warn(`approvals channel ${target.id} is not a text channel`);
       return;
     }
 
     const embed = {
-      description: "User Joined",
+      description: `${user.id}\nUser Joined`,
       timestamp: Date.now(),
       image: {
         url: user.displayAvatarURL({ dynamic: true, size: 512 }),
@@ -34,23 +31,50 @@ export const registerIsolation = (bot: Client): void => {
       },
     };
 
-    const msg = await target.send(new MessageEmbed(embed));
+    const msg = await target.send(user.id, new MessageEmbed(embed));
     await msg.react("✅");
-    const collector = msg.createReactionCollector(reactionFilter, {
-      time: 1000*60*60*24,
-    });
-
-    // TODO: make this not a quick hack that just gets the feature working
-    // ie. no fetching roles when adding, integrate with command system
-    // or use partials to get persistence/no time limit, figure out a more
-    // detailed system on how to reject users
-    collector.on("collect", async (reaction, approvingUser): Promise<void> => {
-      if (reaction.emoji.name === "✅") {
-        await member.roles.add(
-          db.roles.participant,
-          `Approved by ${approvingUser.username}#${approvingUser.discriminator}`,
-        );
-      }
-    });
+  });
+  bot.on("messageReactionAdd", async (reaction, user): Promise<void> => {
+    if (reaction.partial) {
+      await reaction.fetch();
+    }
+    if (reaction.emoji.name !== "✅") {
+      return;
+    }
+    if (user.partial) {
+      await user.fetch();
+    }
+    if (user.id === bot.user?.id) {
+      return;
+    }
+    const { message } = reaction;
+    if (message.partial) {
+      await message.fetch();
+    }
+    if (message.guild === null) {
+      return;
+    }
+    if (message.author.id !== bot.user?.id) {
+      return;
+    }
+    const db = fetchGuild(message.guild);
+    if (db === undefined) {
+      return;
+    }
+    if (message.channel.id !== db.channels.approvals) {
+      return;
+    }
+    const { content } = message;
+    if (content.match(/^[0-9]+$/) === null) {
+      return;
+    }
+    const member = message.guild.member(content);
+    if (member === null) {
+      return;
+    }
+    const reason = `Approved by <@${user.id}> (${user.id})`;
+    await member.roles.add(db.roles.participant, reason);
+    await message.edit(reason);
+    await message.reactions.removeAll();
   });
 };
