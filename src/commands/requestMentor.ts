@@ -4,7 +4,7 @@ import { Command } from "../command";
 
 export const command: Command = {
   name: "request_mentor",
-  execute: async (_client, msg, _): Promise<void> => {
+  execute: async (_client, msg, _args): Promise<void> => {
     if (msg.member === null || msg.guild === null) {
       return;
     }

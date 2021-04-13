@@ -11,6 +11,8 @@ import { config } from "./config";
 interface GuildInfo {
   roles: {
     participant: string;
+    available: string;
+    mentor: string;
     [key: string]: string | undefined;
   };
   channels: {
