@@ -21,6 +21,7 @@
     "ajv": "^8.0.5",
     "discord.js": "^12.5.1",
     "dotenv-safe": "^8.2.0",
+    "lodash": "^4.17.21",
     "lowdb": "^1.0.0"
   },
   "devDependencies": {

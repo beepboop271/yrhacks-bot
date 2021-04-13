@@ -1,4 +1,6 @@
-import { OverwriteData, Permissions, Role, SystemChannelFlags } from "discord.js";
+import { Channel, OverwriteData, Permissions, Role, SystemChannelFlags } from "discord.js";
+import fp from "lodash/fp";
+const { set } = fp;
 
 import { Command } from "../command";
 import { config, OverwriteConfig } from "../config";
@@ -26,10 +28,9 @@ const makePerms = (
   return getPerms(perms.map((perm): number => P[perm]));
 };
 
-const roleMap: Map<string, Role> = new Map();
-
 const makeOverwrites = (
   overwrites: OverwriteConfig[] | undefined,
+  roles: Map<string, Role>,
 ): OverwriteData[] | undefined => {
   if (overwrites === undefined) {
     return undefined;
@@ -38,7 +39,7 @@ const makeOverwrites = (
   const data: OverwriteData[] = [];
   for (const overwrite of overwrites) {
     for (const roleName of overwrite.id) {
-      const role = roleMap.get(roleName);
+      const role = roles.get(roleName);
       if (role === undefined) {
         console.warn(`'${roleName}' was not found while constructing overwrite`);
       } else {
@@ -66,9 +67,12 @@ export const command: Command = {
     const { guild } = msg;
     const { roles, channels } = guild;
 
-    db.set(`${guild.id}.roles`, { })
-      .set(`${guild.id}.channels`, { })
-      .write();
+    const guildDb = db(guild.id);
+    await guildDb.write(set("roles", { }));
+    await guildDb.write(set("channels", { }));
+
+    const roleMap: Map<string, Role> = new Map();
+    const channelMap: Map<string, Channel> = new Map();
 
     // remove existing roles synchronously
     // (channels are removed synchronously because of visual bugs,
@@ -100,9 +104,7 @@ export const command: Command = {
         reason: "Bot setup command",
       });
       roleMap.set(role.name, roleObj);
-      db.set(`${guild.id}.roles.${role.name}`, roleObj.id).value();
     }
-    db.write();
 
     // remove all existing channels synchronously
     // (there's a visual bug when you remove them too quickly)
@@ -116,11 +118,11 @@ export const command: Command = {
         category.name,
         {
           type: "category",
-          permissionOverwrites: makeOverwrites(category.permissionOverwrites),
+          permissionOverwrites: makeOverwrites(category.permissionOverwrites, roleMap),
           reason: "Bot setup command",
         },
       );
-      db.set(`${guild.id}.channels.${category.name}`, categoryObj.id).value();
+      channelMap.set(category.name, categoryObj);
       for (const channel of category.channels ?? []) {
         const channelObj = await channels.create(
           channel.name,
@@ -128,14 +130,25 @@ export const command: Command = {
             type: channel.type ?? "text",
             parent: categoryObj,
             topic: channel.topic,
-            permissionOverwrites: makeOverwrites(channel.permissionOverwrites),
+            permissionOverwrites: makeOverwrites(channel.permissionOverwrites, roleMap),
             reason: "Bot setup command",
           },
         );
-        db.set(`${guild.id}.channels.${channel.name}`, channelObj.id).value();
+        channelMap.set(channel.name, channelObj);
       }
     }
-    db.write();
+
+    const rolesDb = db(`${guild.id}.roles`);
+    const channelsDb = db(`${guild.id}.channels`);
+    const writes: Array<Promise<unknown>> = [];
+
+    for (const [name, role] of roleMap) {
+      writes.push(rolesDb.write(set(name, role.id)));
+    }
+    for (const [name, channel] of channelMap) {
+      writes.push(channelsDb.write(set(name, channel.id)));
+    }
+    await Promise.all(writes);
 
     // set settings
     await guild.edit(

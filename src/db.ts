@@ -1,5 +1,5 @@
-import lowdb from "lowdb";
 import FileAsync from "lowdb/adapters/FileAsync";
+import lowdb from "lowdb/lib/fp";
 
 import { config } from "./config";
 
@@ -10,7 +10,8 @@ import { config } from "./config";
 // so not sure what to do...
 interface GuildInfo {
   roles: {
-    [key: string]: string;
+    participant: string;
+    [key: string]: string | undefined;
   };
   channels: {
     [key: string]: string;
