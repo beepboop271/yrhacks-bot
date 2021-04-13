@@ -15,11 +15,6 @@ export const command: Command = {
       config.wordlist.add(arg.toLowerCase());
     }
 
-    if (config.wordlistFile === undefined) {
-      console.log("no wordlist file specified, could not persist changes");
-      return;
-    }
-
     // should not need anything more complicated for a small file
     await fs.promises.writeFile(
       config.wordlistFile,
