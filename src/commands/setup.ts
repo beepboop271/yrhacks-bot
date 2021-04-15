@@ -1,32 +1,10 @@
-import { Channel, OverwriteData, Permissions, Role, SystemChannelFlags } from "discord.js";
+import { Channel, OverwriteData, Permissions, Role } from "discord.js";
 import fp from "lodash/fp";
 const { set } = fp;
 
 import { Command } from "../command";
 import { config, OverwriteConfig } from "../config";
 import { db } from "../db";
-
-const P = Permissions.FLAGS;
-const noSystemMessages = new SystemChannelFlags(0)
-  .add(SystemChannelFlags.FLAGS.BOOST_MESSAGE_DISABLED)
-  .add(SystemChannelFlags.FLAGS.WELCOME_MESSAGE_DISABLED);
-
-const getPerms = (perms?: number[]): Permissions => {
-  const permsObj = new Permissions(0);
-  for (const perm of perms ?? []) {
-    permsObj.add(perm);
-  }
-  return permsObj;
-};
-
-const makePerms = (
-  perms: Array<keyof typeof P> | undefined,
-): Permissions => {
-  if (perms === undefined) {
-    return getPerms();
-  }
-  return getPerms(perms.map((perm): number => P[perm]));
-};
 
 const makeOverwrites = (
   overwrites: OverwriteConfig[] | undefined,
@@ -45,7 +23,7 @@ const makeOverwrites = (
       } else {
         data.push({
           id: role,
-          allow: makePerms(overwrite.allow),
+          allow: overwrite.allow,
           type: "role",
         });
       }
@@ -60,7 +38,7 @@ export const command: Command = {
     if (msg.guild === null || msg.member === null) {
       return;
     }
-    if (!msg.member.hasPermission(P.ADMINISTRATOR)) {
+    if (!msg.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
       return;
     }
 
@@ -87,7 +65,7 @@ export const command: Command = {
 
     // create roles
     await roles.everyone.setPermissions(
-      getPerms(),
+      [],
       "Bot setup command",
     );
     roleMap.set("everyone", roles.everyone);
@@ -98,7 +76,7 @@ export const command: Command = {
           name: role.name,
           color: role.color,
           hoist: role.hoist ?? false,
-          permissions: makePerms(role.permissions),
+          permissions: role.permissions,
           mentionable: role.mentionable ?? false,
         },
         reason: "Bot setup command",
@@ -154,12 +132,16 @@ export const command: Command = {
     await Promise.all(writes);
 
     // set settings
+
+    // silly tslint not realising that undefined is not an
+    // acceptable argument for the function...
+    // tslint:disable-next-line: no-null-keyword
+    await guild.setSystemChannel(null, "Bot setup command");
     await guild.edit(
       {
         verificationLevel: "LOW",
         explicitContentFilter: "ALL_MEMBERS",
         defaultMessageNotifications: "MENTIONS",
-        systemChannelFlags: noSystemMessages,
       },
       "Bot setup command",
     );
