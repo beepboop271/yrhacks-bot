@@ -1,4 +1,3 @@
-import { Permissions } from "discord.js";
 import fs from "fs";
 
 import { Command } from "../command";
@@ -6,11 +5,10 @@ import { config } from "../config";
 
 export const command: Command = {
   name: "wordban",
-  execute: async (_client, msg, args): Promise<void> => {
-    if (msg.member?.hasPermission(Permissions.FLAGS.MANAGE_MESSAGES) !== true) {
-      return;
-    }
-
+  title: "Ban Word",
+  description: "Adds a word to the banned word list",
+  requiredPerms: [ "MANAGE_MESSAGES" ],
+  execute: async (_client, _msg, args): Promise<void> => {
     for (const arg of args) {
       config.wordlist.add(arg.toLowerCase());
     }

@@ -3,6 +3,9 @@ import { fetchGuild } from "../db";
 
 export const command: Command = {
   name: "end_session",
+  title: "End Mentor Session",
+  description: "Deletes the current mentorship channel",
+  requiredPerms: [],
   execute: async (_client, msg, _args): Promise<void> => {
     if (msg.guild === null || msg.channel.type !== "text") {
       return;

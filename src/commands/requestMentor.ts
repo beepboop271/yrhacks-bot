@@ -5,6 +5,9 @@ import { fetchChannel, fetchGuild, fetchRole } from "../db";
 
 export const command: Command = {
   name: "request_mentor",
+  title: "Request a Mentor",
+  description: "Requests the creation of a mentorship channel on the requested topics with the given team members",
+  requiredPerms: [],
   execute: async (_client, msg, _args): Promise<void> => {
     if (msg.member === null || msg.guild === null) {
       return;

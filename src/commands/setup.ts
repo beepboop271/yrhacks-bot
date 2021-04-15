@@ -1,4 +1,4 @@
-import { Channel, OverwriteData, Permissions, Role } from "discord.js";
+import { Channel, OverwriteData, Role } from "discord.js";
 import fp from "lodash/fp";
 const { set } = fp;
 
@@ -34,11 +34,11 @@ const makeOverwrites = (
 
 export const command: Command = {
   name: "setup",
+  title: "Server Setup",
+  description: "Creates channels and roles for the server, storing created IDs",
+  requiredPerms: [ "ADMINISTRATOR" ],
   execute: async (_client, msg, _args): Promise<void> => {
     if (msg.guild === null || msg.member === null) {
-      return;
-    }
-    if (!msg.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
       return;
     }
 
