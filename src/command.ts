@@ -1,17 +1,47 @@
-import { Client, Message, PermissionResolvable } from "discord.js";
+import { Client, Guild, GuildMember, Message, PermissionResolvable } from "discord.js";
 import fs from "fs";
 
 import { config } from "./config";
+import { DbGuildInfo, fetchGuild } from "./db";
 
-type CommandExecutor = (client: Client, msg: Message, args: string[]) => void;
+class GuildMessage extends Message {
+  // copy of Message but with guild and member
+  // overridden to be non-null
+  public readonly guild!: Guild;
+  public readonly member!: GuildMember;
+}
 
-export interface Command {
+const isGuildMessage = (msg: Message): msg is GuildMessage =>
+  msg.guild !== null && msg.member !== null;
+
+interface CommandBase {
   name: string;
   title: string;
   description: string;
   requiredPerms: PermissionResolvable;
-  execute: CommandExecutor;
 }
+
+interface DbCommand extends CommandBase {
+  requiresSetup: true;
+  execute(
+    client: Client,
+    msg: GuildMessage,
+    args: string[],
+    db: DbGuildInfo,
+  ): Promise<void>;
+}
+
+interface NoDbCommand extends CommandBase {
+  requiresSetup: false;
+  execute(
+    client: Client,
+    msg: GuildMessage,
+    args: string[],
+    db: undefined,
+  ): Promise<void>;
+}
+
+export type Command = DbCommand | NoDbCommand;
 
 const commands: Map<string, Command> = new Map();
 
@@ -24,8 +54,8 @@ for (const file of await fs.promises.readdir("dist/commands")) {
 }
 
 export const registerCommands = (bot: Client): void => {
-  bot.on("message", (msg): void => {
-    if (msg.guild === null || msg.member === null) {
+  bot.on("message", async (msg): Promise<void> => {
+    if (!isGuildMessage(msg)) {
       return;
     }
     if (msg.author.bot) {
@@ -49,6 +79,14 @@ export const registerCommands = (bot: Client): void => {
       return;
     }
 
-    command.execute(bot, msg, args);
+    if (command.requiresSetup) {
+      const db = fetchGuild(msg.guild);
+      if (db === undefined) {
+        return;
+      }
+      await command.execute(bot, msg, args, db);
+    } else {
+      await command.execute(bot, msg, args, undefined);
+    }
   });
 };

@@ -1,24 +1,17 @@
 import { GuildMember, OverwriteData, Role } from "discord.js";
 
 import { Command } from "../command";
-import { fetchChannel, fetchGuild, fetchRole } from "../db";
+import { fetchChannel, fetchRole } from "../db";
 
 export const command: Command = {
   name: "request_mentor",
   title: "Request a Mentor",
   description: "Requests the creation of a mentorship channel on the requested topics with the given team members",
   requiredPerms: [],
-  execute: async (_client, msg, _args): Promise<void> => {
-    if (msg.member === null || msg.guild === null) {
-      return;
-    }
-
+  requiresSetup: true,
+  execute: async (_client, msg, _args, db): Promise<void> => {
     const { member, guild } = msg;
 
-    const db = fetchGuild(guild);
-    if (db === undefined) {
-      return;
-    }
     if (!member.roles.cache.has(db.roles.participant)) {
       return;
     }

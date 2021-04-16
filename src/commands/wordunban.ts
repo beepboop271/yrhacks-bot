@@ -8,7 +8,8 @@ export const command: Command = {
   title: "Unban Word",
   description: "Removes a word from the banned word list",
   requiredPerms: [ "MANAGE_MESSAGES" ],
-  execute: async (_client, _msg, args): Promise<void> => {
+  requiresSetup: false,
+  execute: async (_client, _msg, args, _db): Promise<void> => {
     for (const arg of args) {
       config.wordlist.delete(arg.toLowerCase());
     }

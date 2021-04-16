@@ -9,7 +9,7 @@ import { config } from "./config";
 // bot will probably hardcode strings that are written in
 // config too (e.g. access role id of the "mentor" role)
 // so not sure what to do...
-interface GuildInfo {
+export interface DbGuildInfo {
   roles: {
     participant: string;
     available: string;
@@ -19,18 +19,18 @@ interface GuildInfo {
   channels: {
     approvals: string;
     Mentorship: string;
-    [key: string]: string;
+    [key: string]: string | undefined;
   };
 }
 
-interface Schema {
-  [key: string]: GuildInfo | undefined;
+interface DbSchema {
+  [key: string]: DbGuildInfo | undefined;
 }
 
-const adapter = new FileAsync<Schema>(config.dbFile);
+const adapter = new FileAsync<DbSchema>(config.dbFile);
 export const db = await lowdb(adapter);
 
-export const fetchGuild = (guild: Guild): GuildInfo | undefined => {
+export const fetchGuild = (guild: Guild): DbGuildInfo | undefined => {
   const guildDb = db.getState()[guild.id];
   if (guildDb === undefined) {
     console.warn(`guild ${guild.id} (${guild.name}) not setup properly`);

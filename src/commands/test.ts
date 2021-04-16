@@ -5,7 +5,8 @@ export const command: Command = {
   title: "Test Message",
   description: "Sends 'hi'",
   requiredPerms: [ "MANAGE_GUILD" ],
-  execute: async (_client, msg, _args): Promise<void> => {
+  requiresSetup: false,
+  execute: async (_client, msg, _args, _db): Promise<void> => {
     await msg.channel.send("hi");
   },
 };

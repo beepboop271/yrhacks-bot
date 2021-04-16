@@ -1,23 +1,18 @@
 import { Command } from "../command";
-import { fetchGuild } from "../db";
 
 export const command: Command = {
   name: "end_session",
   title: "End Mentor Session",
   description: "Deletes the current mentorship channel",
   requiredPerms: [],
-  execute: async (_client, msg, _args): Promise<void> => {
-    if (msg.guild === null || msg.channel.type !== "text") {
+  requiresSetup: true,
+  execute: async (_client, msg, _args, db): Promise<void> => {
+    if (msg.channel.type !== "text") {
       return;
     }
-    const { guild, channel } = msg;
+    const { channel } = msg;
 
     if (channel.parent?.name !== "Mentorship") {
-      return;
-    }
-
-    const db = fetchGuild(guild);
-    if (db === undefined) {
       return;
     }
 

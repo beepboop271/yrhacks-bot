@@ -6,7 +6,8 @@ export const command: Command = {
   title: "Reload Config",
   description: "Reloads the configuration JSON files of the bot",
   requiredPerms: [ "MANAGE_GUILD" ],
-  execute: async (_client, _msg, _args): Promise<void> => {
+  requiresSetup: false,
+  execute: async (_client, _msg, _args, _db): Promise<void> => {
     await reloadConfig();
   },
 };

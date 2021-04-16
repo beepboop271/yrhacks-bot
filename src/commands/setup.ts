@@ -37,11 +37,8 @@ export const command: Command = {
   title: "Server Setup",
   description: "Creates channels and roles for the server, storing created IDs",
   requiredPerms: [ "ADMINISTRATOR" ],
-  execute: async (_client, msg, _args): Promise<void> => {
-    if (msg.guild === null || msg.member === null) {
-      return;
-    }
-
+  requiresSetup: false,
+  execute: async (_client, msg, _args, _db): Promise<void> => {
     const { guild } = msg;
     const { roles, channels } = guild;
 
