@@ -1,6 +1,8 @@
 import { Guild, GuildChannel, Role } from "discord.js";
+import fp from "lodash/fp";
 import FileAsync from "lowdb/adapters/FileAsync";
 import lowdb from "lowdb/lib/fp";
+const { set, unset } = fp;
 
 import { config } from "./config";
 
@@ -12,14 +14,21 @@ import { config } from "./config";
 export interface DbGuildInfo {
   roles: {
     participant: string;
-    available: string;
     mentor: string;
-    [key: string]: string | undefined;
+    // role name -> id
+    [roleName: string]: string | undefined;
+  };
+  tickets: {
+    // help channel id -> ticket message id
+    // ticket message id -> help channel id
+    [id: string]: string;
   };
   channels: {
     approvals: string;
     Mentorship: string;
-    [key: string]: string | undefined;
+    tickets: string;
+    // channel name -> id
+    [channelName: string]: string | undefined;
   };
 }
 
@@ -29,6 +38,13 @@ interface DbSchema {
 
 const adapter = new FileAsync<DbSchema>(config.dbFile);
 export const db = await lowdb(adapter);
+
+export const initGuild = async (guild: Guild): Promise<void> => {
+  const guildDb = db(guild.id);
+  await guildDb.write(set("roles", { }));
+  await guildDb.write(set("tickets", { }));
+  await guildDb.write(set("channels", { }));
+};
 
 export const fetchGuild = (guild: Guild): DbGuildInfo | undefined => {
   const guildDb = db.getState()[guild.id];
@@ -47,7 +63,30 @@ export const fetchRole = (guild: Guild, id: string): Role | undefined => {
   return role;
 };
 
-export const fetchChannel = (guild: Guild, id: string): GuildChannel | undefined => {
+export const addTicket = async (
+  guild: Guild,
+  channelId: string,
+  messageId: string,
+): Promise<void> => {
+  const ticketsDb = db(`${guild.id}.tickets`);
+  await ticketsDb.write(set(channelId, messageId));
+  await ticketsDb.write(set(messageId, channelId));
+};
+
+export const removeTicket = async (
+  guild: Guild,
+  channelId: string,
+  messageId: string,
+): Promise<void> => {
+  const ticketsDb = db(`${guild.id}.tickets`);
+  await ticketsDb.write(unset(channelId));
+  await ticketsDb.write(unset(messageId));
+};
+
+export const fetchChannel = (
+  guild: Guild,
+  id: string,
+): GuildChannel | undefined => {
   const channel = guild.channels.resolve(id);
   if (channel === null) {
     console.warn(`channel ${id} is not in the right guild ${guild.id}`);

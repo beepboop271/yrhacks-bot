@@ -4,7 +4,7 @@ const { set } = fp;
 
 import { Command } from "../command";
 import { config, OverwriteConfig } from "../config";
-import { db } from "../db";
+import { db, initGuild } from "../db";
 
 const makeOverwrites = (
   overwrites: OverwriteConfig[] | undefined,
@@ -42,9 +42,7 @@ export const command: Command = {
     const { guild } = msg;
     const { roles, channels } = guild;
 
-    const guildDb = db(guild.id);
-    await guildDb.write(set("roles", { }));
-    await guildDb.write(set("channels", { }));
+    await initGuild(guild);
 
     const roleMap: Map<string, Role> = new Map();
     const channelMap: Map<string, Channel> = new Map();
