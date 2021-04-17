@@ -21,13 +21,13 @@ export const registerIsolation = (bot: Client): void => {
     }
 
     const embed = {
-      description: `${user.id}\nUser Joined`,
+      description: "User Joined",
       timestamp: Date.now(),
       image: {
         url: user.displayAvatarURL({ dynamic: true, size: 512 }),
       },
       author: {
-        name: `${user.username}#${user.discriminator}`,
+        name: `${user.username}#${user.discriminator} (${user.id})`,
       },
     };
 
@@ -72,7 +72,7 @@ export const registerIsolation = (bot: Client): void => {
     if (member === null) {
       return;
     }
-    const reason = `Approved by <@${user.id}> (${user.id})`;
+    const reason = `${content} - Approved by <@${user.id}> (${user.id})`;
     await member.roles.add(db.roles.participant, reason);
     await message.edit(reason);
     await message.reactions.removeAll();
