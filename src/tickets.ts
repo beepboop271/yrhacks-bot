@@ -1,4 +1,5 @@
 import { Client, Guild, GuildMember, Message, MessageReaction, PartialUser, User } from "discord.js";
+import { config } from "./config";
 
 import { DbGuildInfo, fetchGuild } from "./db";
 
@@ -76,8 +77,8 @@ export const registerMentorTickets = (bot: Client): void => {
       SEND_MESSAGES: true,
     });
 
-    if (message.embeds[0].hexColor === "#ff0000") {
-      await message.edit(message.embeds[0].setColor("#000000"));
+    if (message.embeds[0].hexColor === config.ticketColours.new) {
+      await message.edit(message.embeds[0].setColor(config.ticketColours.old));
     }
   });
   bot.on("messageReactionRemove", async (reaction, user): Promise<void> => {
@@ -104,7 +105,7 @@ export const registerMentorTickets = (bot: Client): void => {
     }
 
     if (reaction.count <= 1 && message.embeds.length > 0) {
-      await message.edit(message.embeds[0].setColor("#ff0000"));
+      await message.edit(message.embeds[0].setColor(config.ticketColours.new));
     }
   });
 };

@@ -45,6 +45,11 @@ interface RoleConfig {
 
 interface Config {
   prefix: string;
+  enableSetup: boolean;
+  ticketColours: {
+    new: string;
+    old: string;
+  };
   channelFile: string;
   dbFile: string;
   roleFile: string;

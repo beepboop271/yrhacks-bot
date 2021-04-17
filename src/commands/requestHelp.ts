@@ -9,6 +9,7 @@ import {
 } from "discord.js";
 
 import { Command } from "../command";
+import { config } from "../config";
 import { addTicket, fetchChannel } from "../db";
 
 const isCategoryChannel = (channel: Channel): channel is CategoryChannel =>
@@ -81,7 +82,7 @@ export const command: Command = {
 
     const embed = {
       description,
-      color: "#ff0000",
+      color: config.ticketColours.new,
       timestamp: Date.now(),
       author: {
         name: makeUserString(msg.author),

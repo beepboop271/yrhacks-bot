@@ -39,6 +39,10 @@ export const command: Command = {
   requiredPerms: [ "ADMINISTRATOR" ],
   requiresSetup: false,
   execute: async (_client, msg, _args, _db): Promise<void> => {
+    if (!config.enableSetup) {
+      return;
+    }
+
     const { guild } = msg;
     const { roles, channels } = guild;
 

@@ -9,6 +9,27 @@
       "description": "The command prefix for the bot, such as '!'",
       "minLength": 1
     },
+    "enableSetup": {
+      "type": "boolean",
+      "description": "Whether the 'setup' command should be allowed to run or not"
+    },
+    "ticketColours": {
+      "type": "object",
+      "description": "The embed colours to use on mentor help tickets",
+      "properties": {
+        "new": {
+          "type": "string",
+          "description": "The colour to show on an unclaimed ticket",
+          "pattern": "^#[0-9a-f]{6}$"
+        },
+        "old": {
+          "type": "string",
+          "description": "The colour to show on a claimed ticket",
+          "pattern": "^#[0-9a-f]{6}$"
+        }
+      },
+      "required": ["new", "old"]
+    },
     "channelFile": {
       "type": "string",
       "description": "The path to the server channel config json file",
@@ -31,6 +52,12 @@
     }
   },
   "required": [
-    "prefix", "channelFile", "dbFile", "roleFile", "wordlistFile"
+    "prefix",
+    "enableSetup",
+    "ticketColours",
+    "channelFile",
+    "dbFile",
+    "roleFile",
+    "wordlistFile"
   ]
 }

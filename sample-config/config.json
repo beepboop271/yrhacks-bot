@@ -1,5 +1,10 @@
 {
   "prefix": "!",
+  "enableSetup": false,
+  "ticketColours": {
+    "new": "#ff0000",
+    "old": "#000000"
+  },
   "channelFile": "sample-config/channels.json",
   "dbFile": "db.json",
   "roleFile": "sample-config/roles.json",
