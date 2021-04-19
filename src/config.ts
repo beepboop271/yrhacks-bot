@@ -50,6 +50,7 @@ interface Config {
     new: string;
     old: string;
   };
+  markerRoleColour: string;
   channelFile: string;
   dbFile: string;
   roleFile: string;

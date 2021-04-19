@@ -18,6 +18,9 @@ export interface DbGuildInfo {
     // role name -> id
     [roleName: string]: string | undefined;
   };
+  markerRoles: {
+    [roleName: string]: string | undefined;
+  };
   tickets: {
     // help channel id -> ticket message id
     // ticket message id -> help channel id
@@ -43,6 +46,7 @@ export const initGuild = async (guild: Guild): Promise<void> => {
   const guildDb = db(guild.id);
   await guildDb.write(set("roles", { }));
   await guildDb.write(set("tickets", { }));
+  await guildDb.write(set("markerRoles", { }));
   await guildDb.write(set("channels", { }));
 };
 
@@ -61,6 +65,22 @@ export const fetchRole = (guild: Guild, id: string): Role | undefined => {
     return undefined;
   }
   return role;
+};
+
+export const addMarkerRole = async (
+  guild: Guild,
+  role: Role,
+): Promise<void> => {
+  const rolesDb = db(`${guild.id}.markerRoles`);
+  await rolesDb.write(set(role.name, role.id));
+};
+
+export const removeMarkerRole = async (
+  guild: Guild,
+  role: string,
+): Promise<void> => {
+  const rolesDb = db(`${guild.id}.markerRoles`);
+  await rolesDb.write(unset(role));
 };
 
 export const addTicket = async (

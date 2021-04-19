@@ -5,6 +5,7 @@
     "new": "#ff0000",
     "old": "#000000"
   },
+  "markerRoleColour": "#ffffff",
   "channelFile": "sample-config/channels.json",
   "dbFile": "db.json",
   "roleFile": "sample-config/roles.json",

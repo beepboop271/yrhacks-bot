@@ -30,6 +30,11 @@
       },
       "required": ["new", "old"]
     },
+    "markerRoleColour": {
+      "type": "string",
+      "description": "The colour to assign roles created by create_role",
+      "pattern": "^#[0-9a-f]{6}$"
+    },
     "channelFile": {
       "type": "string",
       "description": "The path to the server channel config json file",
@@ -55,6 +60,7 @@
     "prefix",
     "enableSetup",
     "ticketColours",
+    "markerRoleColour",
     "channelFile",
     "dbFile",
     "roleFile",
