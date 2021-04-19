@@ -74,6 +74,15 @@ export const command: Command = {
     const topic = content.substring(0, content.search(/\s/)).trimEnd();
     const description = content.substring(content.search(/\s/)).trimStart();
 
+    // channel name max: 100 chars
+    // embed title max: 256 chars
+    // all other limits will never be met because the command
+    // is sent in a message and thus <=2000 chars
+    // https://discordjs.guide/popular-topics/embeds.html#embed-limits
+    if (topic.length > 100) {
+      return;
+    }
+
     const channel = await guild.channels.create(
       topic,
       {
@@ -95,12 +104,9 @@ export const command: Command = {
       author: {
         name: makeUserString(msg.author),
       },
-      fields: [
-        {
-          name: "Ids",
-          value: `${msg.id} ${channel.id}`,
-        },
-      ],
+      footer: {
+        text: `${msg.id} ${channel.id}`,
+      },
     };
 
     const ticket = await tickets.send(
