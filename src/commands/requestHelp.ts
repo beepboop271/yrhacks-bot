@@ -24,7 +24,7 @@ const makeUserString = (user: User): string =>
 export const command: Command = {
   name: "request_help",
   title: "Request Help",
-  description: "Requests the creation of a mentorship channel on the requested topics with the given team members",
+  description: "Creates a mentorship channel for the given participants, requesting the given mentors or mentors with the given topics to join",
   requiredPerms: [],
   requiresSetup: true,
   execute: async (_client, msg, _args, db): Promise<void> => {
@@ -64,6 +64,13 @@ export const command: Command = {
       msg.content.search(trailingMentions),
     ).trim();
 
+    if (content.length === 0) {
+      return;
+    }
+    if (content.search(/\s/) < 1) {
+      return;
+    }
+
     const topic = content.substring(0, content.search(/\s/)).trimEnd();
     const description = content.substring(content.search(/\s/)).trimStart();
 
@@ -81,6 +88,7 @@ export const command: Command = {
     );
 
     const embed = {
+      title: topic,
       description,
       color: config.ticketColours.new,
       timestamp: Date.now(),
@@ -89,14 +97,8 @@ export const command: Command = {
       },
       fields: [
         {
-          name: "Command Message Id",
-          value: msg.id,
-          inline: true,
-        },
-        {
-          name: "Ticket Channel Id",
-          value: channel.id,
-          inline: true,
+          name: "Ids",
+          value: `${msg.id} ${channel.id}`,
         },
       ],
     };
