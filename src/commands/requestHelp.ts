@@ -114,13 +114,9 @@ export const command: Command = {
     await channel.send(participants.map(makeUserMention).join(" "));
     await channel.send("Please wait for a mentor. You may elaborate more on your issue and upload files if you wish. Description provided:");
 
-    const quotedDescription = description
-      .split(/\r\n|\r|\n/)
-      .map((line): string => `> ${line}`)
-      .join("\n");
-
+    // will never be >2000 chars because the command name is >4 chars
     await channel.send(
-      quotedDescription.length <= 2000 ? quotedDescription : description,
+      `>>> ${description}`,
       { disableMentions: "everyone" },
     );
   },
