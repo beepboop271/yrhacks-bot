@@ -2,8 +2,8 @@ import { Command } from "../command";
 
 export const command: Command = {
   name: "role",
-  title: "Add a Marker Role",
-  description: "Adds a role/multiple roles created by create_role to the user",
+  title: "Toggle a Marker Role",
+  description: "Adds/Removes a role/multiple roles created by create_role to the user",
   requiredPerms: [ "CHANGE_NICKNAME" ],
   requiresSetup: true,
   execute: async (_client, msg, args, db): Promise<void> => {
