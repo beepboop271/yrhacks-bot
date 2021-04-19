@@ -1,6 +1,6 @@
 import { Client, Guild, GuildMember, Message, MessageReaction, PartialUser, User } from "discord.js";
-import { config } from "./config";
 
+import { config } from "./config";
 import { DbGuildInfo, fetchGuild } from "./db";
 
 interface CheckData {
