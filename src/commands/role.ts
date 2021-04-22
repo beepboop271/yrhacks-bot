@@ -1,6 +1,6 @@
 import { EmbedFieldData, MessageEmbed } from "discord.js";
 
-import { Command } from "../command";
+import { Command, sendCommandFeedback } from "../command";
 import { config } from "../config";
 import { mention } from "../utils";
 
@@ -52,15 +52,6 @@ export const command: Command = {
       return;
     }
 
-    // TODO: this will probably be a common reply when we add
-    // feedback to other commands, should move to a function
-    await msg.channel.send(new MessageEmbed({
-      description: `${mention(msg.author)} **${config.prefix}${command.name}**`,
-      fields: replyFields,
-      timestamp: Date.now(),
-      footer: {
-        text: msg.id,
-      },
-    }));
+    await sendCommandFeedback(msg, command, replyFields);
   },
 };

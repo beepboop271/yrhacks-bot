@@ -1,10 +1,9 @@
-import { Client, PermissionResolvable } from "discord.js";
+import { Client, EmbedFieldData, GuildChannel, Message, MessageEmbed, PermissionResolvable, TextChannel } from "discord.js";
 import fs from "fs";
 
 import { config } from "./config";
 import { DbGuildInfo, fetchGuild } from "./db";
-import { GuildMessage, isGuildMessage } from "./utils";
-
+import { GuildMessage, isGuildMessage, mention } from "./utils";
 interface CommandBase {
   name: string;
   title: string;
@@ -80,4 +79,19 @@ export const registerCommands = (bot: Client): void => {
       await command.execute(bot, msg, args, undefined);
     }
   });
+};
+
+export const sendCommandFeedback = async (
+  msg: Message,
+  command: Command,
+  fields: EmbedFieldData[],
+): Promise<void> => {
+  await msg.channel.send(new MessageEmbed({
+    description: `${mention(msg.author)} **${config.prefix}${command.name}**`,
+    fields,
+    timestamp: Date.now(),
+    footer: {
+      text: msg.id,
+    },
+  }));
 };
