@@ -1,18 +1,9 @@
-import { Client, Guild, GuildMember, Message, PermissionResolvable } from "discord.js";
+import { Client, PermissionResolvable } from "discord.js";
 import fs from "fs";
 
 import { config } from "./config";
 import { DbGuildInfo, fetchGuild } from "./db";
-
-class GuildMessage extends Message {
-  // copy of Message but with guild and member
-  // overridden to be non-null
-  public readonly guild!: Guild;
-  public readonly member!: GuildMember;
-}
-
-const isGuildMessage = (msg: Message): msg is GuildMessage =>
-  msg.guild !== null && msg.member !== null;
+import { GuildMessage, isGuildMessage } from "./utils";
 
 interface CommandBase {
   name: string;
