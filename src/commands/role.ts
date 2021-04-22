@@ -1,4 +1,14 @@
+import { EmbedFieldData, MessageEmbed } from "discord.js";
+
 import { Command } from "../command";
+import { config } from "../config";
+import { mention } from "../utils";
+
+const makeRoleList = (name: string, ids: string[]): EmbedFieldData => ({
+  name,
+  value: ids.map((id): string => `<@&${id}>`).join(" "),
+  inline: true,
+});
 
 export const command: Command = {
   name: "role",
@@ -7,29 +17,50 @@ export const command: Command = {
   requiredPerms: [ "CHANGE_NICKNAME" ],
   requiresSetup: true,
   execute: async (_client, msg, args, db): Promise<void> => {
-    if (args.length < 1 && msg.mentions.roles.size < 1) {
+    const { member, mentions } = msg;
+
+    if (args.length < 1 && mentions.roles.size < 1) {
       return;
     }
 
-    for (const role of args) {
-      const id = db.markerRoles[role];
+    const names = args.concat(
+      mentions.roles.array().map((role): string => role.name),
+    );
+
+    const add: string[] = [];
+    const remove: string[] = [];
+
+    for (const name of names) {
+      const id = db.markerRoles[name];
       if (id !== undefined) {
-        if (msg.member.roles.cache.has(id)) {
-          await msg.member.roles.remove(id);
-        } else {
-          await msg.member.roles.add(id);
-        }
+        (member.roles.cache.has(id) ? remove : add).push(id);
       }
     }
-    for (const role of msg.mentions.roles.values()) {
-      const id = db.markerRoles[role.name];
-      if (id !== undefined) {
-        if (msg.member.roles.cache.has(id)) {
-          await msg.member.roles.remove(id);
-        } else {
-          await msg.member.roles.add(id);
-        }
-      }
+
+    const replyFields = [];
+
+    if (add.length > 0) {
+      await member.roles.add(add, "role command");
+      replyFields.push(makeRoleList("Added:", add));
     }
+    if (remove.length > 0) {
+      await member.roles.remove(remove, "role command");
+      replyFields.push(makeRoleList("Removed:", remove));
+    }
+
+    if (replyFields.length === 0) {
+      return;
+    }
+
+    // TODO: this will probably be a common reply when we add
+    // feedback to other commands, should move to a function
+    await msg.channel.send(new MessageEmbed({
+      description: `${mention(msg.author)} **${config.prefix}${command.name}**`,
+      fields: replyFields,
+      timestamp: Date.now(),
+      footer: {
+        text: msg.id,
+      },
+    }));
   },
 };
