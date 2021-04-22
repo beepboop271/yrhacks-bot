@@ -14,17 +14,19 @@ export const command: Command = {
 
     const { guild } = msg;
 
-    for (const role of args) {
-      const id = db.markerRoles[role];
+    for (const roleName of args) {
+      // the mentions will also be here but they are not
+      // role names so it is fine
+      const id = db.markerRoles[roleName];
       if (id !== undefined) {
-        await guild.roles.resolve(id)?.delete("delete_role");
-        await removeMarkerRole(guild, role);
+        await guild.roles.resolve(id)?.delete("delete_role command");
+        await removeMarkerRole(guild, roleName);
       }
     }
     for (const role of msg.mentions.roles.values()) {
       const id = db.markerRoles[role.name];
       if (id !== undefined) {
-        await guild.roles.resolve(id)?.delete("delete_role");
+        await role.delete("delete_role command");
         await removeMarkerRole(guild, role.name);
       }
     }

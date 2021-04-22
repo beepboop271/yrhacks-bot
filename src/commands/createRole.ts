@@ -25,7 +25,7 @@ export const command: Command = {
             permissions: [],
             mentionable: true,
           },
-          reason: "create_role",
+          reason: "create_role command",
         });
         await addMarkerRole(guild, role);
       }
