@@ -1,25 +1,19 @@
 import {
   CategoryChannel,
   Channel,
-  GuildMember,
   MessageEmbed,
   OverwriteData,
-  Role,
-  User,
 } from "discord.js";
 
 import { Command } from "../command";
 import { config } from "../config";
 import { addTicket, fetchChannel } from "../db";
+import { makeUserString, mention } from "../utils";
 
 const isCategoryChannel = (channel: Channel): channel is CategoryChannel =>
   channel.type === "category";
 
-const makeRoleMention = (role: Role): string => `<@&${role.id}>`;
-const makeUserMention = (user: User | GuildMember): string => `<@${user.id}>`;
 const trailingMentions = /(?:<@(?:!|&|)\d+>\s*)+$/;
-const makeUserString = (user: User): string =>
-  `${user.username}#${user.discriminator} (${user.id})`;
 
 export const command: Command = {
   name: "request_help",
@@ -45,18 +39,15 @@ export const command: Command = {
     }
 
     const participants = [msg.member];
-    const requests = msg.mentions.roles.map(makeRoleMention);
+    const requests = msg.mentions.roles.map(mention);
+    const keywords = msg.mentions.roles.map((role): string => role.name);
 
     for (const member of msg.mentions.members?.values() ?? []) {
       if (member.roles.cache.has(db.roles.participant)) {
         participants.push(member);
       } else if (member.roles.cache.has(db.roles.mentor)) {
-        requests.push(makeUserMention(member));
+        requests.push(mention(member));
       }
-    }
-
-    if (requests.length === 0) {
-      return;
     }
 
     const content = msg.content.substring(
@@ -96,9 +87,14 @@ export const command: Command = {
       },
     );
 
+    const taggedDescription =
+      keywords.length > 0
+        ? `Search tags: ${keywords.join(" ")}\n\n${description}`
+        : description;
+
     const embed = {
       title: topic,
-      description,
+      description: taggedDescription,
       color: config.ticketColours.new,
       timestamp: Date.now(),
       author: {
@@ -117,7 +113,7 @@ export const command: Command = {
 
     await addTicket(guild, channel.id, ticket.id);
 
-    await channel.send(participants.map(makeUserMention).join(" "));
+    await channel.send(participants.map(mention).join(" "));
     await channel.send("Please wait for a mentor. You may elaborate more on your issue and upload files if you wish. Description provided:");
 
     // will never be >2000 chars because the command name is >4 chars
