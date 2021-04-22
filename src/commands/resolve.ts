@@ -17,12 +17,15 @@ export const command: Command = {
       return;
     }
 
+    const msgId = db.tickets[channel.id];
+    if (msgId === undefined) {
+      return;
+    }
+
     await channel.send("Session is ending! This channel will be deleted in 10 seconds");
     // TODO: no floating promise, also delay doesn't work?
     // delay works sometimes????
     setTimeout(channel.delete.bind(channel), 10000);
-
-    const msgId = db.tickets[channel.id];
 
     const tickets = msg.guild.channels.resolve(db.channels.tickets);
     if (tickets === null || !tickets.isText()) {

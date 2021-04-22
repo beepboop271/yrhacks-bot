@@ -6,7 +6,11 @@ export const registerMentorTickets = (): void => {
     "tickets",
     "✅",
     async (kind, reaction, user, msg, db): Promise<void> => {
-      const channel = msg.guild.channels.resolve(db.tickets[msg.id]);
+      const channelId = db.tickets[msg.id];
+      if (channelId === undefined) {
+        return;
+      }
+      const channel = msg.guild.channels.resolve(channelId);
       if (channel === null) {
         return;
       }

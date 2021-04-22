@@ -24,7 +24,7 @@ export interface DbGuildInfo {
   tickets: {
     // help channel id -> ticket message id
     // ticket message id -> help channel id
-    [id: string]: string;
+    [id: string]: string | undefined;
   };
   channels: {
     approvals: string;
