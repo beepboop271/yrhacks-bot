@@ -13,7 +13,7 @@ import { makeUserString, mention } from "../utils";
 const isCategoryChannel = (channel: Channel): channel is CategoryChannel =>
   channel.type === "category";
 
-const trailingMentions = /(?:<@(?:!|&|)\d+>\s*)+$/;
+const trailingMentions = /(?:<@(?:!|&|)\d+>\s*)*$/;
 
 export const command: Command = {
   name: "request_help",
