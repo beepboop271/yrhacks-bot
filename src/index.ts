@@ -3,6 +3,7 @@ import { Client } from "discord.js";
 import { registerCensoring } from "./censoring";
 import { registerCommands } from "./command";
 import { registerIsolation } from "./isolation";
+import { registerReactions } from "./reactions";
 import { registerMentorTickets } from "./tickets";
 
 const bot = new Client({
@@ -14,8 +15,9 @@ bot.on("ready", (): void => {
 });
 
 registerCensoring(bot);
+registerReactions(bot);
 registerCommands(bot);
 registerIsolation(bot);
-registerMentorTickets(bot);
+registerMentorTickets();
 
 await bot.login(process.env.DISCORD_BOT_TOKEN);

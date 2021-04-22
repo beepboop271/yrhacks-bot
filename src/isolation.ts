@@ -1,6 +1,8 @@
 import { Client, MessageEmbed } from "discord.js";
 
 import { fetchChannel, fetchGuild } from "./db";
+import { onChannelReaction } from "./reactions";
+import { makeUserString, mention } from "./utils";
 
 export const registerIsolation = (bot: Client): void => {
   bot.on("guildMemberAdd", async (member): Promise<void> => {
@@ -23,58 +25,37 @@ export const registerIsolation = (bot: Client): void => {
     const embed = {
       description: "User Joined",
       timestamp: Date.now(),
-      image: {
+      thumbnail: {
         url: user.displayAvatarURL({ dynamic: true, size: 512 }),
       },
       author: {
-        name: `${user.username}#${user.discriminator} (${user.id})`,
+        name: makeUserString(user),
       },
     };
 
     const msg = await target.send(user.id, new MessageEmbed(embed));
     await msg.react("✅");
   });
-  bot.on("messageReactionAdd", async (reaction, user): Promise<void> => {
-    if (reaction.partial) {
-      await reaction.fetch();
-    }
-    if (reaction.emoji.name !== "✅") {
-      return;
-    }
-    if (user.partial) {
-      await user.fetch();
-    }
-    if (user.id === bot.user?.id) {
-      return;
-    }
-    const { message } = reaction;
-    if (message.partial) {
-      await message.fetch();
-    }
-    if (message.guild === null) {
-      return;
-    }
-    if (message.author.id !== bot.user?.id) {
-      return;
-    }
-    const db = fetchGuild(message.guild);
-    if (db === undefined) {
-      return;
-    }
-    if (message.channel.id !== db.channels.approvals) {
-      return;
-    }
-    const { content } = message;
-    if (content.match(/^[0-9]+$/) === null) {
-      return;
-    }
-    const member = message.guild.member(content);
-    if (member === null) {
-      return;
-    }
-    const reason = `${content} - Approved by <@${user.id}> (${user.id})`;
-    await member.roles.add(db.roles.participant, reason);
-    await message.edit(reason);
-    await message.reactions.removeAll();
-  });
+
+  onChannelReaction(
+    "approvals",
+    "✅",
+    async (kind, _reaction, user, msg, db): Promise<void> => {
+      if (kind === "remove") {
+        return;
+      }
+      const { content } = msg;
+      if (content.match(/^[0-9]+$/) === null) {
+        return;
+      }
+      const member = msg.guild.member(content);
+      if (member === null) {
+        return;
+      }
+      const reason = `${content} - Approved by ${mention(user)}`;
+      await member.roles.add(db.roles.participant, reason);
+      await msg.edit(reason);
+      await msg.reactions.removeAll();
+    },
+  );
 };
