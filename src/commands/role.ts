@@ -1,8 +1,7 @@
-import { EmbedFieldData, MessageEmbed } from "discord.js";
+import { EmbedFieldData } from "discord.js";
 
-import { Command, sendCommandFeedback } from "../command";
-import { config } from "../config";
-import { mention } from "../utils";
+import { Command } from "../command";
+import { sendCommandFeedback } from "../utils";
 
 const makeRoleList = (name: string, ids: string[]): EmbedFieldData => ({
   name,
