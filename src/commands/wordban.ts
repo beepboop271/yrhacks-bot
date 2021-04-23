@@ -4,7 +4,7 @@ import { Command } from "../command";
 import { config } from "../config";
 
 export const command: Command = {
-  name: "wordban",
+  name: "word_ban",
   title: "Ban Word",
   description: "Adds a word to the banned word list",
   requiredPerms: [ "MANAGE_MESSAGES" ],
