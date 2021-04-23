@@ -15,8 +15,18 @@ export interface DbGuildInfo {
   roles: {
     participant: string;
     mentor: string;
+    pending: string;
     // role name -> id
     [roleName: string]: string | undefined;
+  };
+  channels: {
+    approvals: string;
+    Mentorship: string;
+    tickets: string;
+    log: string;
+    isolation: string;
+    // channel name -> id
+    [channelName: string]: string | undefined;
   };
   markerRoles: {
     [roleName: string]: string | undefined;
@@ -26,12 +36,12 @@ export interface DbGuildInfo {
     // ticket message id -> help channel id
     [id: string]: string | undefined;
   };
-  channels: {
-    approvals: string;
-    Mentorship: string;
-    tickets: string;
-    // channel name -> id
-    [channelName: string]: string | undefined;
+}
+
+export interface DbUserInfo {
+  users: {
+    // user id -> unique invite code
+    [id: string]: string | undefined;
   };
 }
 
@@ -42,12 +52,15 @@ interface DbSchema {
 const adapter = new FileAsync<DbSchema>(config.dbFile);
 export const db = await lowdb(adapter);
 
+const userAdapter = new FileAsync<DbUserInfo>(config.dbUserFile);
+export const dbUser = await lowdb(userAdapter);
+
 export const initGuild = async (guild: Guild): Promise<void> => {
   const guildDb = db(guild.id);
   await guildDb.write(set("roles", { }));
-  await guildDb.write(set("tickets", { }));
-  await guildDb.write(set("markerRoles", { }));
   await guildDb.write(set("channels", { }));
+  await guildDb.write(set("markerRoles", { }));
+  await guildDb.write(set("tickets", { }));
 };
 
 export const fetchGuild = (guild: Guild): DbGuildInfo | undefined => {

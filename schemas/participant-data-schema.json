@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Participant Data",
+  "description": "Private data to use for invite link generation and association of users to students",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "email": {
+        "type": "string",
+        "description": "The email address of the participant, never shown externally"
+      },
+      "displayName": {
+        "type": "string",
+        "description": "The name of the participant to use as a Discord nickname"
+      },
+      "name": {
+        "type": "string",
+        "description": "The full name of the participant, never shown externally"
+      },
+      "id": {
+        "type": "string",
+        "description": "The id number of the participant, never shown externally"
+      }
+    },
+    "required": [ "email", "displayName" ]
+  }
+}

@@ -45,6 +45,11 @@
       "description": "The path to the id database json file",
       "minLength": 1
     },
+    "dbUserFile": {
+      "type": "string",
+      "description": "The path to the user id database json file",
+      "minLength": 1
+    },
     "roleFile": {
       "type": "string",
       "description": "The path to the server role config json file",
@@ -53,6 +58,11 @@
     "wordlistFile": {
       "type": "string",
       "description": "The path to the banned word list json file",
+      "minLength": 1
+    },
+    "invitesFile": {
+      "type": "string",
+      "description": "The path to the invite data json file",
       "minLength": 1
     }
   },
@@ -63,7 +73,9 @@
     "markerRoleColour",
     "channelFile",
     "dbFile",
+    "dbUserFile",
     "roleFile",
-    "wordlistFile"
+    "wordlistFile",
+    "invitesFile"
   ]
 }

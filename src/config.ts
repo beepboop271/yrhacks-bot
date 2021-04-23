@@ -43,6 +43,15 @@ interface RoleConfig {
   mentionable?: boolean;
 }
 
+interface InviteData {
+  email: string;
+  displayName: string;
+  name: string;
+  id: string;
+  url: string;
+  code: string;
+}
+
 interface Config {
   prefix: string;
   enableSetup: boolean;
@@ -53,12 +62,15 @@ interface Config {
   markerRoleColour: string;
   channelFile: string;
   dbFile: string;
+  dbUserFile: string;
   roleFile: string;
   wordlistFile: string;
+  invitesFile: string;
 
   channels: CategoryConfig[];
   roles: RoleConfig[];
   wordlist: Set<string>;
+  invites: Map<string, InviteData>;
 }
 
 // No way to statically type JSON in a meaningful way when we
@@ -69,10 +81,10 @@ interface Config {
 const readJsonFile = async (file: string): Promise<any> =>
   JSON.parse((await fs.promises.readFile(file)).toString());
 
-const readJsonSchema = async (name: string): Promise<ValidateFunction> =>
+export const readJsonSchema = async (name: string): Promise<ValidateFunction> =>
   new Ajv().compile(await readJsonFile(`schemas/${name}-schema.json`));
 
-const readJson = async (
+export const readJson = async (
   file: string,
   schema: ValidateFunction,
 ): Promise<any> => {
@@ -122,6 +134,18 @@ export const reloadConfig = async (): Promise<boolean> => {
   if (wordData !== false) {
     for (const word of wordData) {
       data.wordlist.add(word);
+    }
+  }
+
+  data.invites = new Map();
+  const invitesData = await readJson(
+    data.invitesFile,
+    await readJsonSchema("invite-data"),
+  ) as ({ [code: string]: InviteData | undefined } | false);
+
+  if (invitesData !== false) {
+    for (const code of Object.keys(invitesData)) {
+      data.invites.set(code, invitesData[code]!);  // it must be a key
     }
   }
 

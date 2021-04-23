@@ -2,9 +2,18 @@
 node_modules
 dist
 .env
+.mypy_cache
 
 /channels.json
 /config.json
 /db.json
+/dbUsers.json
 /roles.json
 /wordlist.json
+
+/auth.json
+/data.json
+/invite-data.json
+/invite-message.html
+*.csv
+/process_spreadsheet.py

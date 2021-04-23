@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Invite Data",
+  "description": "Private data produced by generateInvites",
+  "type": "object",
+  "patternProperties": {
+    "^[a-zA-Z0-9]+$": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "The email address of the participant, never shown externally"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The name of the participant to use as a Discord nickname"
+        },
+        "name": {
+          "type": "string",
+          "description": "The full name of the participant, never shown externally"
+        },
+        "id": {
+          "type": "string",
+          "description": "The id number of the participant, never shown externally"
+        },
+        "url": {
+          "type": "string",
+          "description": "The unique server invite link of the participant"
+        },
+        "code": {
+          "type": "string",
+          "description": "The invite link's unique code, shown so that admins can map Discord users and arbitrary codes to hidden private IDs"
+        }
+      },
+      "required": [ "email", "displayName", "name", "id", "url", "code" ]
+    }
+  }
+}
