@@ -53,7 +53,7 @@ export const registerIsolation = (bot: Client): void => {
         return;
       }
       const reason = `${content} - Approved by ${mention(user)}`;
-      await member.roles.add(db.roles.participant, reason);
+      await member.roles.add(db.roles.pending, reason);
       await msg.edit(reason);
       await msg.reactions.removeAll();
     },

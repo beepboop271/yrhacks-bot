@@ -43,6 +43,10 @@ export interface DbUserInfo {
     // user id -> unique invite code
     [id: string]: string | undefined;
   };
+  codes: {
+    // unique invite code -> user id
+    [code: string]: string | undefined;
+  };
 }
 
 interface DbSchema {
@@ -126,4 +130,11 @@ export const fetchChannel = (
     return undefined;
   }
   return channel;
+};
+
+export const getUsers = (): DbUserInfo => dbUser.getState();
+
+export const addUser = async (code: string, user: string): Promise<void> => {
+  await dbUser("codes").write(set(code, user));
+  await dbUser("users").write(set(user, code));
 };
