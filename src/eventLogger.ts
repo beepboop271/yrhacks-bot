@@ -83,6 +83,10 @@ export const registerEventLogging = (bot: Client): void => {
     }
     const next = after.partial ? after.id : after.content;
 
+    if (!before.partial && !after.partial && prev === next) {
+      return;
+    }
+
     const authorUser = after.partial ? (before.partial ? undefined : before.author) : after.author;
     if (authorUser !== undefined && authorUser.id === bot.user?.id) {
       return;

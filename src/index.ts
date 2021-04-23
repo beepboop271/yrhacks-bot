@@ -5,6 +5,7 @@ import { registerCommands } from "./command";
 import { registerEventLogging } from "./eventLogger";
 import { registerInviteWatch } from "./invites";
 import { registerIsolation } from "./isolation";
+import { registerMessageLogging } from "./messageLogger";
 import { registerReactions } from "./reactions";
 import { registerMentorTickets } from "./tickets";
 
@@ -17,6 +18,7 @@ bot.on("ready", (): void => {
   registerEventLogging(bot);
 });
 
+registerMessageLogging(bot);
 registerInviteWatch(bot);
 registerCensoring(bot);
 registerReactions(bot);

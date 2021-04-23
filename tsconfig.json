@@ -21,8 +21,8 @@
 
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
 
     /* Basic Options */
     // "allowJs": true,                       /* Allow javascript files to be compiled. */

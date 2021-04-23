@@ -22,6 +22,7 @@
     "@google-cloud/local-auth": "^1.0.1",
     "@googleapis/gmail": "^0.2.0",
     "ajv": "^8.0.5",
+    "axios": "^0.21.1",
     "discord.js": "^12.5.1",
     "dotenv-safe": "^8.2.0",
     "lodash": "^4.17.21",
