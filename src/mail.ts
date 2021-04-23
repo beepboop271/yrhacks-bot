@@ -66,6 +66,7 @@ for (const participant of config.invites.values()) {
       "YRHacks Invite!",
       baseMessage
         .replace("{name}", participant.displayName)
+        .replace("{code}", participant.code)
         .replace("{url}", participant.url),
     );
   } catch (e) {
