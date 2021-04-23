@@ -8,7 +8,7 @@ import {
 import { Command } from "../command";
 import { config } from "../config";
 import { addTicket, fetchChannel } from "../db";
-import { makeUserString, mention } from "../utils";
+import { disableEmbed, makeUserString, mention } from "../utils";
 
 const isCategoryChannel = (channel: Channel): channel is CategoryChannel =>
   channel.type === "category";
@@ -55,10 +55,15 @@ export const command: Command = {
       msg.content.search(trailingMentions),
     ).trim();
 
+    const mentoringGuideLink = "https://www.notion.so/Mentoring-8a847a4165984430a104d00599a16a63";
+    const contentErrorMsg = `please specify a topic (one word) and a description for your issue. Make sure they are separated by a space. For a complete mentor system guide, visit ${disableEmbed(mentoringGuideLink)}`;
+
     if (content.length === 0) {
+      await msg.reply(contentErrorMsg);
       return;
     }
     if (content.search(/\s/) < 1) {
+      await msg.reply(contentErrorMsg);
       return;
     }
 
@@ -71,6 +76,7 @@ export const command: Command = {
     // is sent in a message and thus <=2000 chars
     // https://discordjs.guide/popular-topics/embeds.html#embed-limits
     if (topic.length > 100) {
+      await msg.reply("topic must not exceed 100 characters. Please summarize your topic and try again.");
       return;
     }
 
