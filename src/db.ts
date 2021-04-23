@@ -138,3 +138,6 @@ export const addUser = async (code: string, user: string): Promise<void> => {
   await dbUser("codes").write(set(code, user));
   await dbUser("users").write(set(user, code));
 };
+
+export const getCode = (id: string): string | undefined =>
+  dbUser.getState().users[id];

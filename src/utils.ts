@@ -2,6 +2,7 @@ import { Channel, EmbedFieldData, Guild, GuildMember, Message, MessageEmbed, Rol
 
 import { Command } from "./command";
 import { config } from "./config";
+import { getCode } from "./db";
 
 export class GuildMessage extends Message {
   // copy of Message but with guild and member
@@ -14,7 +15,7 @@ export const isGuildMessage = (msg: Message): msg is GuildMessage =>
   msg.guild !== null && msg.member !== null;
 
 export const makeUserString = (user: User): string =>
-  `${user.username}#${user.discriminator} (${user.id})`;
+  `${user.tag} (${user.id}) (${getCode(user.id) ?? ""})`;
 
 export const mention = (thing: Role | Channel | User | GuildMember): string => {
   if (thing instanceof Role) {
