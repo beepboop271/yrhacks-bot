@@ -14,8 +14,12 @@ export class GuildMessage extends Message {
 export const isGuildMessage = (msg: Message): msg is GuildMessage =>
   msg.guild !== null && msg.member !== null;
 
-export const makeUserString = (user: User): string =>
-  `${user.tag} (${user.id}) (${getCode(user.id) ?? ""})`;
+export const makeUserString = (user: User | string): string => {
+  if (typeof user === "string") {
+    return `${user} (${getCode(user) ?? ""})`;
+  }
+  return `${user.tag} (${user.id}) (${getCode(user.id) ?? ""})`;
+};
 
 export const mention = (thing: Role | Channel | User | GuildMember): string => {
   if (thing instanceof Role) {

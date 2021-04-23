@@ -22,12 +22,25 @@ export const registerIsolation = (bot: Client): void => {
       return;
     }
 
+    let fields;
+    for (const activity of user.presence.activities) {
+      if (activity.type === "CUSTOM_STATUS" && activity.state !== null) {
+        fields = [
+          {
+            name: "Status:",
+            value: activity.state,
+          },
+        ];
+      }
+    }
+
     const embed = {
       description: "User Joined",
       timestamp: Date.now(),
       thumbnail: {
         url: user.displayAvatarURL({ dynamic: true, size: 512 }),
       },
+      fields,
       author: {
         name: makeUserString(user),
       },
@@ -50,6 +63,11 @@ export const registerIsolation = (bot: Client): void => {
       }
       const member = msg.guild.member(content);
       if (member === null) {
+        return;
+      }
+      if (member.roles.highest.id !== msg.guild.roles.everyone.id) {
+        await msg.edit(`${content} - User already has roles`);
+        await msg.reactions.removeAll();
         return;
       }
       const reason = `${content} - Approved by ${mention(user)}`;
