@@ -2,6 +2,7 @@ import { Client } from "discord.js";
 
 import { registerCensoring } from "./censoring";
 import { registerCommands } from "./command";
+import { registerInviteWatch } from "./invites";
 import { registerIsolation } from "./isolation";
 import { registerReactions } from "./reactions";
 import { registerMentorTickets } from "./tickets";
@@ -14,6 +15,7 @@ bot.on("ready", (): void => {
   console.log("logged in");
 });
 
+registerInviteWatch(bot);
 registerCensoring(bot);
 registerReactions(bot);
 registerCommands(bot);
