@@ -31,6 +31,8 @@ export const mention = (thing: Role | Channel | User | GuildMember): string => {
   return `<@${thing.id}>`;
 };
 
+export const disableEmbed = (link: string): string => `<${link}>`;
+
 export const sendCommandFeedback = async (
   msg: Message,
   command: Command,
