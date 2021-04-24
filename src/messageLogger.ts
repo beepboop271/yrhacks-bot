@@ -1,15 +1,14 @@
+import axios from "axios";
 import crypto from "crypto";
 import { Client } from "discord.js";
 import fs from "fs";
-import axios from "axios";
-import { PassThrough } from "stream";
 import path from "path";
 
 import { isGuildMessage, makeUserString } from "./utils";
 
 export const registerMessageLogging = (bot: Client): void => {
   let currentFile = 835221;
-  let stream = fs.createWriteStream(`logs/${currentFile}.json`);
+  let stream = fs.createWriteStream(`logs/${currentFile}.json`, { flags: "a" });
   stream.write("[");
 
   bot.on("message", async (msg): Promise<void> => {
@@ -21,7 +20,7 @@ export const registerMessageLogging = (bot: Client): void => {
     if (Number(name) > currentFile) {
       stream.end("]", (): void => { console.log("done"); });
       currentFile = Number(name);
-      stream = fs.createWriteStream(`logs/${currentFile}.json`);
+      stream = fs.createWriteStream(`logs/${currentFile}.json`, { flags: "a" });
       stream.write("[");
     }
 

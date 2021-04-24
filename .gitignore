@@ -10,6 +10,7 @@ dist
 /dbUsers.json
 /roles.json
 /wordlist.json
+/logs
 
 /auth.json
 /data.json

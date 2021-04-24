@@ -57,6 +57,9 @@ const sendEmail = async (
 
 const baseMessage = fs.readFileSync("invite-message.html").toString();
 
+const sleep = async (ms: number): Promise<void> =>
+  new Promise((resolve): unknown => setTimeout(resolve, ms));
+
 for (const participant of config.invites.values()) {
   try {
     await sendEmail(
@@ -73,4 +76,5 @@ for (const participant of config.invites.values()) {
     // console.log(util.inspect(e, true, 4, true));
     console.error(participant.email, e);
   }
+  await sleep(3000);
 }

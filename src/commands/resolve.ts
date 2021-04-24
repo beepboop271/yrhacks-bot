@@ -13,7 +13,7 @@ export const command: Command = {
     }
     const { channel } = msg;
 
-    if (channel.parent?.id === db.channels.Mentorship) {
+    if (channel.parent?.id !== db.channels.Mentorship) {
       return;
     }
 

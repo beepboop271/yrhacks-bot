@@ -1,5 +1,6 @@
 import { Client, MessageEmbed } from "discord.js";
 
+import { config } from "./config";
 import { fetchChannel, fetchGuild } from "./db";
 import { onChannelReaction } from "./reactions";
 import { makeUserString, mention } from "./utils";
@@ -47,6 +48,8 @@ export const registerIsolation = (bot: Client): void => {
     };
 
     const msg = await target.send(user.id, new MessageEmbed(embed));
+    const newDescription = `User Joined\nReject with:\n**${config.prefix}deny ${msg.id} reason...**`;
+    await msg.edit(new MessageEmbed(embed).setDescription(newDescription));
     await msg.react("✅");
   });
 
