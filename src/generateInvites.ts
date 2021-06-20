@@ -54,6 +54,8 @@ bot.on("ready", async (): Promise<void> => {
     participant.url = invite.url;
     participant.code = invite.code;
     result[invite.code] = participant;
+
+    console.log(participant.url, invite.code);
   }
 
   await fs.promises.writeFile(

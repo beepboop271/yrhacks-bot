@@ -11,6 +11,7 @@ import { registerMentorTickets } from "./tickets";
 
 const bot = new Client({
   partials: [ "MESSAGE", "REACTION", "USER" ],
+  messageCacheMaxSize: 1000,
 });
 
 bot.on("ready", (): void => {
