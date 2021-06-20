@@ -19,7 +19,7 @@ export const registerCensoring = (bot: Client): void => {
 
     let { content } = msg;
     content = content.toLowerCase();
-    content = content.replace(/\s+/g, "");
+    // content = content.replace(/\s+/g, "");
     // TODO: common substitutions? eg 0 -> o
 
     let matchedWord;
