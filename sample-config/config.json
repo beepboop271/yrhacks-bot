@@ -6,8 +6,11 @@
     "old": "#000000"
   },
   "markerRoleColour": "#ffffff",
+  "email": "hackathon@example.com",
   "channelFile": "sample-config/channels.json",
   "dbFile": "db.json",
+  "dbUserFile": "dbUsers.json",
   "roleFile": "sample-config/roles.json",
-  "wordlistFile": "sample-config/wordlist.json"
+  "wordlistFile": "sample-config/wordlist.json",
+  "invitesFile": "invite-data.json"
 }

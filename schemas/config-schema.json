@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "title": "Config",
-  "description": "Configuration options for the bot that do not need to be private",
+  "description": "Configuration options for the bot",
   "type": "object",
   "properties": {
     "prefix": {
@@ -34,6 +34,11 @@
       "type": "string",
       "description": "The colour to assign roles created by create_role",
       "pattern": "^#[0-9a-f]{6}$"
+    },
+    "email": {
+      "type": "string",
+      "description": "The email address to send invitations from",
+      "format": "email"
     },
     "channelFile": {
       "type": "string",
@@ -71,6 +76,7 @@
     "enableSetup",
     "ticketColours",
     "markerRoleColour",
+    "email",
     "channelFile",
     "dbFile",
     "dbUserFile",
