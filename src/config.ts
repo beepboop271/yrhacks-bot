@@ -1,5 +1,8 @@
 import Ajv, { ValidateFunction } from "ajv";
+import addFormats from "ajv-formats";
 import fs from "fs";
+
+const ajv = addFormats(new Ajv());
 
 // TODO: two sources of truth with the schema and TS interface
 
@@ -82,7 +85,7 @@ const readJsonFile = async (file: string): Promise<any> =>
   JSON.parse((await fs.promises.readFile(file)).toString());
 
 export const readJsonSchema = async (name: string): Promise<ValidateFunction> =>
-  new Ajv().compile(await readJsonFile(`schemas/${name}-schema.json`));
+  ajv.compile(await readJsonFile(`schemas/${name}-schema.json`));
 
 export const readJson = async (
   file: string,
