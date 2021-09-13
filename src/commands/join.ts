@@ -26,12 +26,7 @@ export const command: Command = {
     if (getUsers().codes[code] !== undefined) {
       return;
     }
-    const guess = getUsers().hypothesis[msg.author.id];
-    if (guess !== undefined) {
-      console.log("join:", code, "guess:", guess);
-    } else {
-      console.log("join:", code, "no guess");
-    }
+    console.log("join:", code);
 
     await addUser(code, msg.author.id);
     await member.roles.add(db.roles.participant);

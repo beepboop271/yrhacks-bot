@@ -16,7 +16,7 @@ export const command: Command = {
     for (const user of msg.mentions.users.values()) {
       results.push({
         name: ".",
-        value: `${mention(user)}: ${getCode(user.id) ?? "none"}`,
+        value: `${mention(user)}: ${getCode(user.id) ?? ""}`,
         inline: true,
       });
     }
@@ -24,7 +24,7 @@ export const command: Command = {
       if (/^\d+$/.test(arg)) {
         results.push({
           name: ".",
-          value: `${arg}: ${getCode(arg) ?? "none"}`,
+          value: `${arg}: ${getCode(arg) ?? ""}`,
           inline: true,
         });
       }

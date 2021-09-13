@@ -3,7 +3,6 @@ import { Client } from "discord.js";
 import { registerCensoring } from "./censoring";
 import { registerCommands } from "./command";
 import { registerEventLogging } from "./eventLogger";
-import { registerInviteWatch } from "./invites";
 import { registerIsolation } from "./isolation";
 import { registerMessageLogging } from "./messageLogger";
 import { registerReactions } from "./reactions";
@@ -20,7 +19,6 @@ bot.on("ready", (): void => {
 });
 
 registerMessageLogging(bot);
-registerInviteWatch(bot);
 registerCensoring(bot);
 registerReactions(bot);
 registerCommands(bot);

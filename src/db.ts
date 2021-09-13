@@ -47,10 +47,6 @@ export interface DbUserInfo {
     // unique invite code -> user id
     [code: string]: string | undefined;
   };
-  hypothesis: {
-    // user id -> unique invite code
-    [id: string]: string | undefined;
-  };
 }
 
 interface DbSchema {
@@ -143,14 +139,5 @@ export const addUser = async (code: string, user: string): Promise<void> => {
   await dbUser("users").write(set(user, code));
 };
 
-export const addUserHypothesis = async (user: string, code: string): Promise<void> => {
-  await dbUser("hypothesis").write(set(user, code));
-};
-
-export const getCode = (id: string): string | undefined => {
-  const real = dbUser.getState().users[id];
-  if (real !== undefined) {
-    return real;
-  }
-  return `${dbUser.getState().hypothesis[id]} (unconfirmed)`;
-};
+export const getCode = (id: string): string | undefined =>
+  dbUser.getState().users[id];
