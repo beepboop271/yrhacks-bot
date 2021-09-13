@@ -9,7 +9,8 @@
       "properties": {
         "email": {
           "type": "string",
-          "description": "The email address of the participant, never shown externally"
+          "description": "The email address of the participant, never shown externally",
+          "format": "email"
         },
         "displayName": {
           "type": "string",
